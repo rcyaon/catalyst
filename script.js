@@ -5,6 +5,7 @@
 const LINKS = {
   join: "https://olincatalyst.notion.site/Onboarding-bdfdcc062d924b619ffc18da4ba08f7d",
   support: "https://olin.edu/give-olin-areas-support-student-crowdfunding/catalyst",
+  speakers: "https://luma.com/olincatalyst",
 };
 
 const CATEGORIES = {
@@ -29,7 +30,8 @@ const ELEMENTS = [
     facts: { Topics: "idea validation, user interviews", Level: "no experience needed" } },
   { sym: "Sp", name: "Speakers", cat: "learning",
     text: "Founders and investors share what actually happened, including the parts that don't make the pitch deck.",
-    facts: { Form: "talk + Q&A", Open_to: "everyone" } },
+    facts: { Form: "talk + Q&A", Open_to: "everyone" },
+    link: { href: LINKS.speakers, label: "See speaker events →" } },
   { sym: "Wm", name: "Weekly meeting", cat: "network",
     text: "The standing reaction vessel. Speakers, idea sharing, or time to work on existing projects. Open to anyone.",
     facts: { Cadence: "weekly", Open_to: "anyone" } },
@@ -82,7 +84,8 @@ function selectElement(i) {
     <p>${el.text}</p>
     <dl>${Object.entries(el.facts)
       .map(([k, v]) => `<dt>${k.replace(/_/g, " ")}</dt><dd>${v}</dd>`)
-      .join("")}</dl>`;
+      .join("")}</dl>
+    ${el.link ? `<a class="text-link" href="${el.link.href}" target="_blank" rel="noopener">${el.link.label}</a>` : ""}`;
 }
 
 ELEMENTS.forEach((el, i) => {

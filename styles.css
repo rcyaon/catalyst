@@ -70,6 +70,14 @@ em { font-style: italic; }
 .btn-invert { background: var(--flame); border-color: var(--flame); color: var(--ink); box-shadow: 4px 4px 0 var(--paper); }
 .btn-invert:hover { box-shadow: 6px 6px 0 var(--paper); }
 
+.text-link {
+  display: inline-block; margin-top: 16px;
+  font-family: var(--mono); font-size: .8rem; font-weight: 700;
+  color: var(--flame); text-decoration: none;
+  border-bottom: 2px solid currentColor;
+}
+.text-link:hover { color: inherit; }
+
 /* ---------- nav ---------- */
 .nav {
   position: sticky; top: 0; z-index: 50;
