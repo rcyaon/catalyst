@@ -130,7 +130,7 @@ if (num && !reduceMotion) {
 (() => {
   const canvas = $("#particles");
   const ctx = canvas.getContext("2d");
-  const BOND = 130;
+  const BOND = 150;
   let w, h, atoms = [], running = true;
   const mouse = { x: -999, y: -999 };
 
@@ -139,11 +139,11 @@ if (num && !reduceMotion) {
     w = canvas.clientWidth; h = canvas.clientHeight;
     canvas.width = w * dpr; canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const n = Math.round(Math.min(70, (w * h) / 16000));
+    const n = Math.round(Math.min(90, (w * h) / 12000));
     atoms = Array.from({ length: n }, (_, i) => ({
       x: Math.random() * w, y: Math.random() * h,
       vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
-      r: 2 + Math.random() * 3.5, hot: i % 6 === 0,
+      r: 3 + Math.random() * 4.5, hot: i % 6 === 0,
     }));
   }
 
@@ -161,21 +161,21 @@ if (num && !reduceMotion) {
         const d = Math.hypot(a.x - b.x, a.y - b.y);
         if (d < BOND) {
           const hot = a.hot || b.hot;
-          ctx.strokeStyle = hot ? `rgba(255,107,1,${0.5 * (1 - d / BOND)})` : `rgba(20,22,27,${0.16 * (1 - d / BOND)})`;
-          ctx.lineWidth = hot ? 1.5 : 1;
+          ctx.strokeStyle = hot ? `rgba(255,107,1,${0.85 * (1 - d / BOND)})` : `rgba(20,22,27,${0.35 * (1 - d / BOND)})`;
+          ctx.lineWidth = hot ? 3 : 2;
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
         }
       }
       const md = Math.hypot(a.x - mouse.x, a.y - mouse.y);
       if (md < 170) {
-        ctx.strokeStyle = `rgba(255,107,1,${0.7 * (1 - md / 170)})`;
-        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = `rgba(255,107,1,${0.9 * (1 - md / 170)})`;
+        ctx.lineWidth = 3;
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
       }
     }
     for (const a of atoms) {
       ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
-      ctx.fillStyle = a.hot ? "rgba(255,107,1,.85)" : "rgba(20,22,27,.28)";
+      ctx.fillStyle = a.hot ? "rgba(255,107,1,.95)" : "rgba(20,22,27,.4)";
       ctx.fill();
     }
     if (running && !reduceMotion) requestAnimationFrame(frame);
