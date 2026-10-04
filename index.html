@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catalyst — Entrepreneurship at Olin College</title>
+  <meta name="description" content="Catalyst is Olin College of Engineering's student-run hub for entrepreneurship: grants, mentorship, workshops, and a community of builders.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="logo-mark.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav" id="nav">
+    <a class="brand" href="#top" aria-label="Catalyst home">
+      <img class="brand-logo" src="logo-wordmark.png" alt="Catalyst" width="931" height="331">
+    </a>
+    <nav aria-label="Primary">
+      <a href="#elements">Elements</a>
+      <a href="#grants">Grants</a>
+      <a href="#meetings">Meetings</a>
+    </nav>
+    <a class="btn btn-small" data-link="join" href="#join">Join</a>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <canvas id="particles" aria-hidden="true"></canvas>
+      <div class="hero-inner">
+        <h1 class="equation" aria-label="Idea plus Catalyst yields venture">
+          <span class="eq-term">idea</span>
+          <span class="eq-op" aria-hidden="true">+</span>
+          <span class="eq-tile" aria-hidden="true"><small>01</small>Ct<em>Catalyst</em></span>
+          <span class="eq-op eq-arrow" aria-hidden="true">⟶</span>
+          <span class="eq-term eq-product">venture</span>
+        </h1>
+        <p class="lede">
+          A catalyst doesn't change what's possible. It makes it happen sooner.
+          We're Olin's student-run hub for entrepreneurship: funding, mentorship,
+          and a community of builders for turning ideas into real things.
+        </p>
+      </div>
+      <a class="scroll-cue" href="#elements" aria-label="Scroll to the elements">
+        <span></span>
+      </a>
+    </section>
+
+    <!-- PERIODIC TABLE -->
+    <section class="section" id="elements">
+      <div class="section-head">
+        <h2>The elements of Catalyst.</h2>
+        <p>Everything the club does, in one table. Pick an element to see what it is.</p>
+      </div>
+
+      <div class="legend" id="legend" aria-hidden="true"></div>
+
+      <div class="table-wrap">
+        <div class="ptable" id="ptable" role="group" aria-label="Elements of Catalyst"></div>
+        <aside class="detail" id="detail" aria-live="polite"></aside>
+      </div>
+    </section>
+
+    <!-- GRANTS -->
+    <section class="section section-dark" id="grants">
+      <div class="grant-grid">
+        <div>
+          <h2>Grants of up to <span class="big-num" data-count="1000">$1,000</span></h2>
+          <p>
+            Prototype parts, a domain, user-interview gift cards, a booth at a market.
+            If money is the thing between you and the next version of your project,
+            ask us for it.
+          </p>
+          <a class="btn btn-invert" data-link="join" href="#join">Ask about a grant</a>
+        </div>
+        <ol class="steps">
+          <li><span>1</span><div><h3>Bring the idea</h3><p>Rough is fine. Tell us what you're building and what's blocking you.</p></div></li>
+          <li><span>2</span><div><h3>Sharpen it</h3><p>Mentors and office hours help you work out what to test first.</p></div></li>
+          <li><span>3</span><div><h3>Get funded</h3><p>Up to $1,000 toward making the next real step happen.</p></div></li>
+          <li><span>4</span><div><h3>Show the room</h3><p>Come back and share what you learned, win or lose.</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- MEETINGS -->
+    <section class="section" id="meetings">
+      <div class="section-head">
+        <p class="label">Procedure — Weekly</p>
+        <h2>One meeting, three states.</h2>
+        <p>We meet every week and it's open to anyone. Depending on the week, it's one of these.</p>
+      </div>
+      <div class="states">
+        <article class="state reveal">
+          <span class="state-tag">Gas</span>
+          <h3>Speaker night</h3>
+          <p>Founders, operators, and investors from the Boston startup world come through and tell the real version of the story.</p>
+        </article>
+        <article class="state reveal">
+          <span class="state-tag">Liquid</span>
+          <h3>Idea share</h3>
+          <p>Bring a half-formed thing. Get questions, pushback, and a few people who want in.</p>
+        </article>
+        <article class="state reveal">
+          <span class="state-tag">Solid</span>
+          <h3>Build session</h3>
+          <p>Heads-down time on existing projects, with people around to unblock you.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- JOIN -->
+    <section class="join" id="join">
+      <p class="label">Result</p>
+      <h2>Got an idea sitting around<br>not reacting with anything?</h2>
+      <p>Come to a meeting. No application, no pitch deck, no experience needed.</p>
+      <div class="hero-cta">
+        <a class="btn" data-link="join" href="#">Get started with Catalyst</a>
+        <a class="btn btn-ghost" data-link="support" href="#">Support the club</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <img class="footer-logo" src="logo-mark.png" alt="" width="930" height="167">
+    <p>Catalyst · Franklin W. Olin College of Engineering · Needham, MA</p>
+    <p class="muted">Student-run. Open to everyone at Olin.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
