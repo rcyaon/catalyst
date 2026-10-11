@@ -163,8 +163,8 @@ em { font-style: italic; }
 .legend span { display: inline-flex; align-items: center; gap: 8px; }
 .legend i { width: 14px; height: 14px; border: 2px solid var(--ink); background: var(--c); }
 
-.table-wrap { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: 28px; align-items: start; }
-.ptable { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.table-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 1fr); gap: 28px; align-items: stretch; }
+.ptable { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-content: start; }
 .el {
   position: relative;
   aspect-ratio: 1;
@@ -220,16 +220,6 @@ em { font-style: italic; }
 .steps span { flex: none; width: 38px; height: 38px; display: grid; place-items: center; border: 2px solid var(--flame); color: var(--flame); font-family: var(--mono); font-weight: 700; }
 .steps p { font-size: .95rem; margin-top: 4px; }
 
-/* ---------- meetings ---------- */
-.states { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-.state { position: relative; padding: 56px 24px 28px; background: var(--paper); border: 2px solid var(--ink); }
-.state:nth-child(1) { box-shadow: 6px 6px 0 var(--blue); }
-.state:nth-child(2) { box-shadow: 6px 6px 0 var(--flame); transition-delay: .12s; }
-.state:nth-child(3) { box-shadow: 6px 6px 0 var(--green); transition-delay: .24s; }
-.state-tag { position: absolute; top: 0; left: 0; padding: 5px 12px; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; }
-.state h3 { font-size: 1.5rem; margin-bottom: 8px; }
-.state p { color: var(--ink-soft); font-size: 1rem; }
-
 /* ---------- join + footer ---------- */
 .join { padding: clamp(80px, 12vw, 160px) clamp(16px, 6vw, 96px); text-align: center; background: var(--flame); border-block: 2px solid var(--ink); }
 .join .label { color: var(--ink); }
@@ -246,7 +236,6 @@ em { font-style: italic; }
 @media (max-width: 960px) {
   .table-wrap, .grant-grid { grid-template-columns: 1fr; }
   .detail { position: static; min-height: 0; }
-  .states { grid-template-columns: 1fr; }
 }
 @media (max-width: 720px) {
   body { font-size: 16px; }

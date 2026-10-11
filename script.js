@@ -13,7 +13,6 @@ const LINKS = {
 const CATEGORIES = {
   fuel: { name: "Fuel", color: "var(--flame)" },
   guidance: { name: "Guidance", color: "var(--blue)" },
-  learning: { name: "Learning", color: "var(--violet)" },
   network: { name: "Network", color: "var(--green)" },
 };
 
@@ -27,19 +26,10 @@ const ELEMENTS = [
   { sym: "Oh", name: "Office hours", cat: "guidance",
     text: "Drop in with a question, a prototype, or a problem. Leave with a next step.",
     facts: { Form: "drop-in", Bring: "whatever you have" } },
-  { sym: "Wk", name: "Workshops", cat: "learning",
-    text: "Hands-on sessions on validating ideas and talking to users, the unglamorous skills that decide whether a project goes anywhere.",
-    facts: { Topics: "idea validation, user interviews", Level: "no experience needed" } },
-  { sym: "Sp", name: "Speakers", cat: "learning",
+  { sym: "Sp", name: "Speakers", cat: "guidance",
     text: "Founders and investors share what actually happened, including the parts that don't make the pitch deck.",
     facts: { Form: "talk + Q&A", Open_to: "everyone" },
     link: { href: LINKS.speakers, label: "See speaker events →" } },
-  { sym: "Wm", name: "Weekly meeting", cat: "network",
-    text: "The standing reaction vessel. Speakers, idea sharing, or time to work on existing projects. Open to anyone.",
-    facts: { Cadence: "weekly", Open_to: "anyone" } },
-  { sym: "Cm", name: "Community", cat: "network",
-    text: "Gatherings that pull entrepreneurial people together from across Olin. Co-founders tend to meet here.",
-    facts: { Who: "builders across Olin", Vibe: "low-key" } },
   { sym: "Bw", name: "BOW", cat: "network",
     text: "Babson, Olin, and Wellesley: a business school, an engineering school, and a liberal arts college that collaborate as BOW. We bring students from all three into the same room on purpose.",
     facts: { Schools: "Babson, Olin, Wellesley", Result: "mixed teams" } },
@@ -81,7 +71,7 @@ function selectElement(i) {
   ptable.querySelectorAll(".el").forEach((b, j) => b.setAttribute("aria-pressed", j === i));
   detail.style.setProperty("--c", cat.color);
   detail.innerHTML = `
-    <p class="label">No. ${String(i + 2).padStart(2, "0")} · ${cat.name}</p>
+    <p class="label">No. ${String(i + 1).padStart(2, "0")} · ${cat.name}</p>
     <div class="detail-sym">${el.sym}</div>
     <h3>${el.name}</h3>
     <p>${el.text}</p>
@@ -96,7 +86,7 @@ ELEMENTS.forEach((el, i) => {
   b.className = "el";
   b.type = "button";
   b.style.setProperty("--c", CATEGORIES[el.cat].color);
-  b.innerHTML = `<span class="el-num">${String(i + 2).padStart(2, "0")}</span>
+  b.innerHTML = `<span class="el-num">${String(i + 1).padStart(2, "0")}</span>
     <span class="el-sym">${el.sym}</span><span class="el-name">${el.name}</span>`;
   b.addEventListener("click", () => selectElement(i));
   ptable.append(b);
