@@ -3,8 +3,10 @@
 
   // The Apps Script web app URL (ends in /exec). See jobs/README.md.
   // Leave it empty to preview the pages with sample jobs; nothing gets sent.
-  var ENDPOINT = '';
+  var ENDPOINT = 'https://script.google.com/macros/s/AKfycbwwCVNDqUNEhfCk2knPHmvATX4h8hwlklkp6f22Lke-xXz89lzGNosPtXz-7eTyvmv9/exec';
   var CONTACT = 'lcondearaujo@olin.edu';
+  // false: the hire page shows an "Email us your posting" button instead of the posting form.
+  var POSTING_FORM_OPEN = false;
   var MAX_RESUME_BYTES = 5 * 1024 * 1024;
 
   var PREVIEW = !ENDPOINT;
@@ -111,6 +113,20 @@
     form.querySelectorAll('[aria-invalid]').forEach(function (i) { i.removeAttribute('aria-invalid'); });
   }
 
+  function clearErrorsOnInput(form) {
+    function clear(e) {
+      var w = e.target.closest('.field');
+      if (w && w.classList.contains('has-error')) {
+        w.classList.remove('has-error');
+        var msg = w.querySelector('.field-error');
+        if (msg) msg.remove();
+        e.target.removeAttribute('aria-invalid');
+      }
+    }
+    form.addEventListener('input', clear);
+    form.addEventListener('change', clear);
+  }
+
   function formValues(form) {
     var out = {};
     new FormData(form).forEach(function (v, k) { if (typeof v === 'string') out[k] = v.trim(); });
@@ -137,14 +153,12 @@
 
   if (page === 'list') {
     var list = $('job-list');
-    getJSON({ action: 'list' }).then(function (r) {
+    if (list) getJSON({ action: 'list' }).then(function (r) {
       list.removeAttribute('aria-busy');
       list.textContent = '';
       if (!r.ok) throw new Error(r.error);
-      if (!r.jobs.length) {
-        list.appendChild(el('p', 'empty', 'No open roles yet. Check back soon.'));
-        return;
-      }
+      // No roles yet: leave the list empty (hidden) so the resume book form is the page.
+      if (!r.jobs.length) return;
       r.jobs.forEach(function (job) {
         var a = el('a', 'job-card');
         a.href = 'job.html?id=' + encodeURIComponent(job.id);
@@ -161,7 +175,55 @@
     }).catch(function () {
       list.removeAttribute('aria-busy');
       list.textContent = '';
-      list.appendChild(el('p', 'empty', "Couldn't load jobs. Refresh to try again."));
+    });
+
+    var rbForm = $('rb-form');
+    var rbStatus = $('rb-status');
+    clearErrorsOnInput(rbForm);
+    var rbSending = false;
+    rbForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (rbSending) return;
+      setStatus(rbStatus, '');
+      var v = formValues(rbForm);
+      v.lookingFor = Array.prototype.map.call(rbForm.querySelectorAll('input[name="lookingFor"]:checked'), function (c) { return c.value; }).join(', ');
+      var file = rbForm.elements.resume.files[0];
+      var errs = [];
+      if (!v.name) errs.push({ field: 'name', message: 'Add your name.' });
+      if (!/^[^\s@]+@(students\.)?olin\.edu$/i.test(v.email)) errs.push({ field: 'email', message: 'Use your @olin.edu email.' });
+      if (!v.year) errs.push({ field: 'year', message: 'Pick your class year.' });
+      if (!file) errs.push({ field: 'resume', message: 'Attach your resume as a PDF.' });
+      else if (file.size > MAX_RESUME_BYTES || !/\.pdf$/i.test(file.name)) errs.push({ field: 'resume', message: 'Attach a PDF under 5 MB.' });
+      if (v.profile && !/^https?:\/\/\S+$/i.test(v.profile)) errs.push({ field: 'profile', message: 'Use a full link starting with https://' });
+      if (!rbForm.elements.consent.checked) errs.push({ field: 'consent', message: 'Check this so we can share your resume.' });
+      if (errs.length) { showFieldErrors(rbForm, errs); return; }
+
+      rbSending = true;
+      var btn = rbForm.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      setStatus(rbStatus, 'Sending…');
+
+      readPdf(file).then(function (data) {
+        v.action = 'resumebook';
+        v.resume = { name: file.name, data: data };
+        return postJSON(v);
+      }).then(function (r) {
+        if (r.ok) {
+          rbForm.hidden = true;
+          var done = $('rb-done');
+          done.hidden = false;
+          if (r.preview) done.querySelector('p').textContent = 'Preview: the form works. Nothing was sent.';
+          done.focus();
+          return;
+        }
+        if (r.error === 'invalid' && r.fields) { showFieldErrors(rbForm, r.fields); setStatus(rbStatus, ''); return; }
+        throw new Error(r.error);
+      }).catch(function () {
+        setStatus(rbStatus, "That didn't go through. Try again in a minute, or email " + CONTACT + '.', true);
+      }).then(function () {
+        rbSending = false;
+        btn.disabled = false;
+      });
     });
   }
 
@@ -263,9 +325,9 @@
     var postForm = $('post-form');
     var postStatus = $('post-status');
 
-    // No backend yet: show an "email us your posting" box instead of the form.
+    // Posting form not open yet: show the "email us your posting" box instead.
     // Add ?preview to the URL to see the form anyway.
-    if (PREVIEW && !params.has('preview')) {
+    if ((PREVIEW || !POSTING_FORM_OPEN) && !params.has('preview')) {
       postForm.hidden = true;
       $('preview-note').hidden = true;
       $('email-us').hidden = false;

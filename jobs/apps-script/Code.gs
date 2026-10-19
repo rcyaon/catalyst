@@ -39,6 +39,9 @@ const APPLICANT_COLUMNS = [
   'Submitted', 'Name', 'Email', 'Class year', 'Major', 'Resume', 'LinkedIn / portfolio', 'Note'
 ];
 const ALL_APPLICATION_COLUMNS = ['Posting ID', 'Company', 'Role'].concat(APPLICANT_COLUMNS);
+const RESUME_BOOK_COLUMNS = [
+  'Updated', 'Name', 'Email', 'Class year', 'Major', 'Looking for', 'Resume', 'LinkedIn / portfolio'
+];
 
 // ---------- entry points ----------
 
@@ -73,6 +76,7 @@ function doPost(e) {
   try {
     if (body.action === 'post') return json_(createPosting_(body));
     if (body.action === 'apply') return json_(apply_(body));
+    if (body.action === 'resumebook') return json_(resumeBook_(body));
     return json_({ ok: false, error: 'bad_action' });
   } catch (err) {
     console.error(err && err.stack || err);
@@ -232,6 +236,78 @@ function apply_(b) {
   }
 
   return { ok: true };
+}
+
+// ---------- resume book ----------
+
+// Olin students sign up to have their resume shared with companies.
+// One row per email: signing up again replaces the resume and updates the row.
+function resumeBook_(b) {
+  const d = {
+    name: clean_(b.name, 120),
+    email: clean_(b.email, 200).toLowerCase(),
+    year: clean_(b.year, 20),
+    major: clean_(b.major, 80),
+    lookingFor: clean_(b.lookingFor, 120),
+    profile: clean_(b.profile, 500)
+  };
+  const fields = [];
+  if (!d.name) fields.push(['name', 'Add your name.']);
+  if (!/^[^\s@]+@(students\.)?olin\.edu$/.test(d.email)) fields.push(['email', 'Use your @olin.edu email.']);
+  if (!d.year) fields.push(['year', 'Pick your class year.']);
+  if (d.profile && !/^https?:\/\/\S+$/i.test(d.profile)) fields.push(['profile', 'Use a full link starting with https://']);
+  if (b.consent !== 'yes') fields.push(['consent', 'Check this so we can share your resume.']);
+
+  let bytes = null;
+  const r = b.resume || {};
+  if (!r.data) {
+    fields.push(['resume', 'Attach your resume as a PDF.']);
+  } else {
+    try { bytes = Utilities.base64Decode(String(r.data)); } catch (err) { bytes = null; }
+    if (!bytes || bytes.length > MAX_RESUME_BYTES || !isPdf_(bytes)) fields.push(['resume', 'Attach a PDF under 5 MB.']);
+  }
+  if (fields.length) return fieldErrors_(fields);
+
+  const sh = sheet_('Resume Book', RESUME_BOOK_COLUMNS);
+  const data = readRecords_(sh);
+  let row = -1;
+  for (let i = 0; i < data.rows.length; i++) {
+    if (String(data.rows[i]['Email']).toLowerCase() === d.email) { row = i + 2; break; }
+  }
+
+  // Replace the old resume file so the folder only holds current resumes.
+  if (row > 0) {
+    const old = String(data.rows[row - 2]['Resume']).match(/\/d\/([-\w]+)/);
+    if (old) {
+      try { DriveApp.getFileById(old[1]).setTrashed(true); } catch (err) { /* already gone */ }
+    }
+  }
+  const file = resumeBookFolder_().createFile(
+    Utilities.newBlob(bytes, 'application/pdf', d.name + ' (' + d.year + ') — resume.pdf'));
+
+  const record = {
+    'Updated': new Date(), 'Name': d.name, 'Email': d.email, 'Class year': d.year, 'Major': d.major,
+    'Looking for': d.lookingFor, 'Resume': file.getUrl(), 'LinkedIn / portfolio': d.profile
+  };
+  if (row > 0) {
+    sh.getRange(row, 1, 1, data.headers.length)
+      .setValues([data.headers.map(function (h) { return safe_(h in record ? record[h] : data.rows[row - 2][h]); })]);
+  } else {
+    appendRecord_(sh, record);
+  }
+  SpreadsheetApp.flush();
+  return { ok: true, updated: row > 0 };
+}
+
+function resumeBookFolder_() {
+  const props = PropertiesService.getScriptProperties();
+  const id = props.getProperty('RESUME_BOOK_FOLDER_ID');
+  if (id) {
+    try { return DriveApp.getFolderById(id); } catch (err) { /* deleted; make a new one */ }
+  }
+  const folder = rootFolder_().createFolder('Resume Book');
+  props.setProperty('RESUME_BOOK_FOLDER_ID', folder.getId());
+  return folder;
 }
 
 // ---------- sheet helpers ----------
@@ -399,5 +475,6 @@ function authorize() {
   rootFolder_();
   sheet_('Postings', POSTING_COLUMNS);
   sheet_('Applications', ALL_APPLICATION_COLUMNS);
+  sheet_('Resume Book', RESUME_BOOK_COLUMNS);
   MailApp.getRemainingDailyQuota();
 }

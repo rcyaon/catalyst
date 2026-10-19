@@ -25,7 +25,7 @@
 .job-card h3 { margin: 4px 0 2px; font-size: 1.3rem; line-height: 1.25; }
 .job-meta { color: var(--ink-soft); }
 .job-foot { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 12px; font-family: var(--mono); font-size: .72rem; color: var(--ink-soft); }
-.empty { padding: 28px; font-family: var(--mono); font-size: .85rem; border: 2px dashed var(--rule); }
+.empty { margin-bottom: 40px; padding: 28px; font-family: var(--mono); font-size: .85rem; border: 2px dashed var(--rule); }
 .job-list[aria-busy="true"]::before { content: "Loading jobs…"; font-family: var(--mono); font-size: .85rem; color: var(--ink-soft); }
 
 .hiring { margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--rule); font-size: .95rem; color: var(--ink-soft); }
@@ -81,6 +81,15 @@
 .fair h2 { font-size: 1.35rem; margin: 4px 0 6px; }
 .fair p:last-child { color: var(--ink-soft); }
 .fair a { color: var(--ink); font-weight: 600; }
+
+.resume-book { margin: 0 0 48px; }
+.checks { border: 0; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.checks legend { width: 100%; padding: 0; margin-bottom: 6px; font-weight: 600; font-size: 1rem; }
+.checks label, .consent label { display: inline-flex; align-items: center; gap: 8px; font-size: 1rem; cursor: pointer; }
+.consent label { align-items: flex-start; }
+.checks input, .consent input { width: 18px; height: 18px; margin: 0; padding: 0; flex: none; accent-color: var(--flame); }
+.consent input { margin-top: 4px; }
+.job-list:empty { display: none; }
 
 .notice { padding: 24px; border: 2px solid var(--ink); background: var(--paper-2); }
 .notice h2 { font-size: 1.5rem; margin-bottom: 8px; }
