@@ -8,6 +8,8 @@
   var MAX_RESUME_BYTES = 5 * 1024 * 1024;
 
   var PREVIEW = !ENDPOINT;
+  // Sample jobs only show with ?preview in the URL, so the live site never lists fake roles.
+  var SHOW_SAMPLES = PREVIEW && new URLSearchParams(location.search).has('preview');
   var SAMPLE = [
     {
       id: 'sample1', company: 'Northwind Robotics', role: 'Hardware Engineering Intern, Summer 2027',
@@ -30,8 +32,9 @@
 
   function getJSON(query) {
     if (PREVIEW) {
-      if (query.action === 'list') return Promise.resolve({ ok: true, jobs: SAMPLE });
-      var j = SAMPLE.filter(function (s) { return s.id === query.id; })[0];
+      var sample = SHOW_SAMPLES ? SAMPLE : [];
+      if (query.action === 'list') return Promise.resolve({ ok: true, jobs: sample });
+      var j = sample.filter(function (s) { return s.id === query.id; })[0];
       return Promise.resolve(j ? { ok: true, job: j } : { ok: false, error: 'not_found' });
     }
     return fetch(ENDPOINT + '?' + new URLSearchParams(query)).then(function (r) { return r.json(); });
@@ -123,7 +126,7 @@
     });
   }
 
-  if (PREVIEW) {
+  if (SHOW_SAMPLES) {
     var note = $('preview-note');
     if (note) note.hidden = false;
   }
@@ -139,7 +142,7 @@
       list.textContent = '';
       if (!r.ok) throw new Error(r.error);
       if (!r.jobs.length) {
-        list.appendChild(el('p', 'empty', 'No open roles right now. Check back soon.'));
+        list.appendChild(el('p', 'empty', 'No open roles yet. Check back soon.'));
         return;
       }
       r.jobs.forEach(function (job) {

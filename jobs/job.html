@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job · Catalyst Jobs</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="../logo-mark.png">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="jobs.css">
+</head>
+<body data-page="job">
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav scrolled">
+    <a class="brand" href="../" aria-label="Catalyst home">
+      <img class="brand-logo" src="../logo-wordmark.png" alt="Catalyst" width="931" height="331">
+    </a>
+    <nav aria-label="Primary">
+      <a href="../#elements">Elements</a>
+      <a href="../#grants">Grants</a>
+      <a href="./">Jobs</a>
+    </nav>
+  </header>
+
+  <main id="main" class="jobs">
+    <p class="preview-note" id="preview-note" hidden>Preview mode: sample job. Applying here sends nothing.</p>
+
+    <a class="back" href="./">← All jobs</a>
+
+    <div class="job-head" id="job-head" aria-live="polite">
+      <p class="job-meta">Loading…</p>
+    </div>
+
+    <div id="job-body" hidden>
+      <div class="job-desc" id="job-desc"></div>
+      <p id="job-link"></p>
+    </div>
+
+    <section class="apply" id="apply" aria-labelledby="apply-title" hidden>
+      <h2 id="apply-title">Apply as an Oliner</h2>
+      <p>Your details and resume go straight to the person hiring.</p>
+
+      <form class="form" id="apply-form" novalidate>
+        <div class="form-row">
+          <div class="field">
+            <label for="name">Full name</label>
+            <input id="name" name="name" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="email">Olin email</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@olin.edu" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="year">Class year</label>
+            <select id="year" name="year" required>
+              <option value="">Choose…</option>
+              <option>2027</option>
+              <option>2028</option>
+              <option>2029</option>
+              <option>2030</option>
+              <option>Alum</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="major">Major <span class="optional">optional</span></label>
+            <input id="major" name="major" placeholder="ECE, MechE, E:C, …">
+          </div>
+        </div>
+        <div class="field">
+          <label for="resume">Resume</label>
+          <input id="resume" name="resume" type="file" accept="application/pdf,.pdf" required>
+          <p class="hint">PDF, up to 5 MB</p>
+        </div>
+        <div class="field">
+          <label for="profile">LinkedIn or portfolio <span class="optional">optional</span></label>
+          <input id="profile" name="profile" type="url" placeholder="https://">
+        </div>
+        <div class="field">
+          <label for="note">Anything you want them to know? <span class="optional">optional</span></label>
+          <textarea id="note" name="note" maxlength="1500" style="min-height:110px"></textarea>
+        </div>
+        <div class="hp" aria-hidden="true">
+          <label for="website">Leave this empty</label>
+          <input id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+        <div class="form-actions">
+          <button class="btn" type="submit">Send application</button>
+          <p class="form-status" id="apply-status" role="status"></p>
+        </div>
+      </form>
+
+      <div class="done" id="apply-done" tabindex="-1" hidden>
+        <h3>Application sent.</h3>
+        <p>It's in the company's applicant list now. They'll reach out by email if it's a fit.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <img class="footer-logo" src="../logo-mark.png" alt="" width="930" height="167">
+    <p>Catalyst · Franklin W. Olin College of Engineering · Needham, MA</p>
+    <p class="muted">Student-run. Open to everyone at Olin.</p>
+  </footer>
+
+  <script src="jobs.js"></script>
+</body>
+</html>
