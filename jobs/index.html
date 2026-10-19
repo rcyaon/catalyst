@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jobs for Oliners · Catalyst</title>
+  <meta name="description" content="Internships and jobs posted for Olin College students. Apply with your resume and it goes straight to the person hiring.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="../logo-mark.png">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="jobs.css">
+</head>
+<body data-page="list">
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav scrolled">
+    <a class="brand" href="../" aria-label="Catalyst home">
+      <img class="brand-logo" src="../logo-wordmark.png" alt="Catalyst" width="931" height="331">
+    </a>
+    <nav aria-label="Primary">
+      <a href="../#elements">Elements</a>
+      <a href="../#grants">Grants</a>
+      <a href="./" aria-current="page">Jobs</a>
+    </nav>
+  </header>
+
+  <main id="main" class="jobs">
+    <p class="preview-note" id="preview-note" hidden>Preview mode: these are sample jobs. Connect the backend in jobs/jobs.js to go live.</p>
+
+    <div class="section-head">
+      <p class="label">Job board</p>
+      <h1>Jobs for Oliners.</h1>
+      <p>Roles posted by companies that want to hire from Olin. Apply here with your resume and it goes straight to the person hiring.</p>
+    </div>
+
+    <div class="job-list" id="job-list" aria-busy="true" aria-live="polite"></div>
+
+    <p class="hiring">
+      Hiring? Email <a href="mailto:lcondearaujo@olin.edu?subject=Posting%20a%20job%20for%20Olin%20students">lcondearaujo@olin.edu</a>
+      and we'll send you a link to post a role. It takes about two minutes.
+      We also help bring companies to Olin's career fair, so ask us about that too.
+    </p>
+  </main>
+
+  <footer class="footer">
+    <img class="footer-logo" src="../logo-mark.png" alt="" width="930" height="167">
+    <p>Catalyst · Franklin W. Olin College of Engineering · Needham, MA</p>
+    <p class="muted">Student-run. Open to everyone at Olin.</p>
+  </footer>
+
+  <script src="jobs.js"></script>
+</body>
+</html>
