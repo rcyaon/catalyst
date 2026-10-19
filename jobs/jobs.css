@@ -77,7 +77,7 @@
 .done .btn { margin-top: 18px; }
 .done:focus { outline: none; }
 
-.fair { margin-top: 40px; padding: 20px 22px; border: 2px solid var(--ink); border-left: 8px solid var(--blue); background: var(--paper); }
+.fair { margin-top: 40px; padding: 20px 22px; border: 2px solid var(--ink); border-left: 8px solid var(--flame); background: var(--paper); }
 .fair h2 { font-size: 1.35rem; margin: 4px 0 6px; }
 .fair p:last-child { color: var(--ink-soft); }
 .fair a { color: var(--ink); font-weight: 600; }
