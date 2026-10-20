@@ -160,3 +160,22 @@ a.opp:hover .role-title { text-decoration: underline; text-decoration-color: var
   .role, .opp { grid-template-columns: 1fr; }
   .role-side { justify-items: start; text-align: left; grid-auto-flow: column; justify-content: start; gap: 12px; }
 }
+
+/* success messages (resume submitted, application sent): light strip, like the status strip */
+.sd .done {
+  position: relative; padding: 18px 20px 18px 56px;
+  background: var(--surface); color: var(--ink);
+  border: 1.5px solid var(--ink); border-left: 6px solid var(--green);
+}
+.sd .done::before {
+  content: "✓"; position: absolute; left: 18px; top: 18px;
+  display: grid; place-items: center; width: 24px; height: 24px;
+  font-size: .85rem; font-weight: 700; background: var(--green); color: var(--paper);
+}
+.sd .done h3 { margin: 0 0 4px; font-size: 1.15rem; }
+.sd .done p { color: var(--ink-soft); font-size: .95rem; }
+.sd .done .btn { margin-top: 14px; }
+/* once sent, drop the card around the message so it isn't a box in a box */
+.sd .card:has(> .done:not([hidden])) { padding: 0; border: 0; background: none; box-shadow: none; }
+.sd .card:has(> .done:not([hidden])) > :not(.done) { display: none; }
+#view-resume:has(#rb-done:not([hidden])) #rb-current { display: none; }
