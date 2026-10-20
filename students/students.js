@@ -112,11 +112,10 @@
     node.classList.toggle('is-error', !!isError);
   }
 
-  function firstName(name, mail) {
-    var n = String(name || '').trim().split(/\s+/)[0];
-    if (n) return n;
-    var local = mail.split('@')[0].split(/[._-]/)[0];
-    return local ? local.charAt(0).toUpperCase() + local.slice(1) : '';
+  // First word of the name they gave us (resume book or an application). No guessing from the
+  // email: Olin addresses are initial + last name, so that reads as "Hi, Lcondearaujo."
+  function firstName(name) {
+    return String(name || '').trim().split(/\s+/)[0] || '';
   }
 
   function showFieldErrors(form, fields) {
@@ -340,8 +339,8 @@
   }
 
   function renderShell() {
-    var name = firstName(data.name, data.email);
-    $('dash-title').textContent = name ? 'Hi, ' + name + '.' : 'Hi there.';
+    var name = firstName(data.name);
+    $('dash-title').textContent = name ? 'Hi, ' + name + '.' : 'Welcome to Catalyst.';
     $('dash-email').textContent = data.email;
     document.querySelectorAll('.me-email').forEach(function (n) { n.textContent = data.email; });
     $('tab-jobs-count').textContent = data.jobs.length || '';
@@ -365,7 +364,7 @@
       action.textContent = 'Update';
     } else {
       text.appendChild(el('strong', null, "You're not in the resume book yet"));
-      text.appendChild(el('span', null, 'Companies hiring from Olin look here first. It takes a minute.'));
+      text.appendChild(el('span', null, 'Fill it in so companies hiring from Olin can find you.'));
       action.textContent = 'Join the resume book';
     }
     rb.appendChild(text);

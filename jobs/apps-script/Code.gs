@@ -428,6 +428,10 @@ function me_(b) {
       };
     });
 
+  const latestName = (readRecords_(sheet_('Applications', ALL_APPLICATION_COLUMNS)).rows
+    .filter(function (r) { return String(r['Email']).toLowerCase() === email && String(r['Name']).trim(); })
+    .pop() || {})['Name'];
+
   const rb = readRecords_(sheet_('Resume Book', RESUME_BOOK_COLUMNS)).rows
     .filter(function (r) { return String(r['Email']).toLowerCase() === email; })[0];
 
@@ -438,7 +442,8 @@ function me_(b) {
   return {
     ok: true,
     email: email,
-    name: String((rb && rb['Name']) || ''),
+    // Their own name from the resume book, else from their latest application.
+    name: String((rb && rb['Name']) || latestName || ''),
     applications: applications,
     resumeBook: rb ? {
       updated: rb['Updated'] instanceof Date ? rb['Updated'].toISOString() : String(rb['Updated']),
