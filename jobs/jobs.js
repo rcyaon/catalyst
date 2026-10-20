@@ -7,7 +7,6 @@
   var CONTACT = 'lcondearaujo@olin.edu';
   // false: the hire page shows an "Email us your posting" button instead of the posting form.
   var POSTING_FORM_OPEN = false;
-  var MAX_RESUME_BYTES = 5 * 1024 * 1024;
 
   var PREVIEW = !ENDPOINT;
   // Sample jobs only show with ?preview in the URL, so the live site never lists fake roles.
@@ -113,33 +112,10 @@
     form.querySelectorAll('[aria-invalid]').forEach(function (i) { i.removeAttribute('aria-invalid'); });
   }
 
-  function clearErrorsOnInput(form) {
-    function clear(e) {
-      var w = e.target.closest('.field');
-      if (w && w.classList.contains('has-error')) {
-        w.classList.remove('has-error');
-        var msg = w.querySelector('.field-error');
-        if (msg) msg.remove();
-        e.target.removeAttribute('aria-invalid');
-      }
-    }
-    form.addEventListener('input', clear);
-    form.addEventListener('change', clear);
-  }
-
   function formValues(form) {
     var out = {};
     new FormData(form).forEach(function (v, k) { if (typeof v === 'string') out[k] = v.trim(); });
     return out;
-  }
-
-  function readPdf(file) {
-    return new Promise(function (resolve, reject) {
-      var r = new FileReader();
-      r.onload = function () { resolve(String(r.result).split(',')[1] || ''); };
-      r.onerror = reject;
-      r.readAsDataURL(file);
-    });
   }
 
   if (SHOW_SAMPLES) {
@@ -151,87 +127,11 @@
 
   var page = document.body.getAttribute('data-page');
 
-  if (page === 'list') {
-    var list = $('job-list');
-    if (list) getJSON({ action: 'list' }).then(function (r) {
-      list.removeAttribute('aria-busy');
-      list.textContent = '';
-      if (!r.ok) throw new Error(r.error);
-      // No roles yet: leave the list empty (hidden) so the resume book form is the page.
-      if (!r.jobs.length) return;
-      r.jobs.forEach(function (job) {
-        var a = el('a', 'job-card');
-        a.href = 'job.html?id=' + encodeURIComponent(job.id);
-        a.appendChild(el('p', 'label', job.company));
-        a.appendChild(el('h3', null, job.role));
-        var m = meta(job);
-        if (m) a.appendChild(el('p', 'job-meta', m));
-        var foot = el('p', 'job-foot');
-        foot.appendChild(el('span', null, ago(job.created)));
-        if (job.deadline) foot.appendChild(el('span', null, 'Apply by ' + fmtDate(job.deadline)));
-        a.appendChild(foot);
-        list.appendChild(a);
-      });
-    }).catch(function () {
-      list.removeAttribute('aria-busy');
-      list.textContent = '';
-    });
-
-    var rbForm = $('rb-form');
-    var rbStatus = $('rb-status');
-    clearErrorsOnInput(rbForm);
-    var rbSending = false;
-    rbForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (rbSending) return;
-      setStatus(rbStatus, '');
-      var v = formValues(rbForm);
-      v.lookingFor = Array.prototype.map.call(rbForm.querySelectorAll('input[name="lookingFor"]:checked'), function (c) { return c.value; }).join(', ');
-      var file = rbForm.elements.resume.files[0];
-      var errs = [];
-      if (!v.name) errs.push({ field: 'name', message: 'Add your name.' });
-      if (!/^[^\s@]+@(students\.)?olin\.edu$/i.test(v.email)) errs.push({ field: 'email', message: 'Use your @olin.edu email.' });
-      if (!v.year) errs.push({ field: 'year', message: 'Pick your class year.' });
-      if (!file) errs.push({ field: 'resume', message: 'Attach your resume as a PDF.' });
-      else if (file.size > MAX_RESUME_BYTES || !/\.pdf$/i.test(file.name)) errs.push({ field: 'resume', message: 'Attach a PDF under 5 MB.' });
-      if (v.profile && !/^https?:\/\/\S+$/i.test(v.profile)) errs.push({ field: 'profile', message: 'Use a full link starting with https://' });
-      if (!rbForm.elements.consent.checked) errs.push({ field: 'consent', message: 'Check this so we can share your resume.' });
-      if (errs.length) { showFieldErrors(rbForm, errs); return; }
-
-      rbSending = true;
-      var btn = rbForm.querySelector('button[type="submit"]');
-      btn.disabled = true;
-      setStatus(rbStatus, 'Sending…');
-
-      readPdf(file).then(function (data) {
-        v.action = 'resumebook';
-        v.resume = { name: file.name, data: data };
-        return postJSON(v);
-      }).then(function (r) {
-        if (r.ok) {
-          rbForm.hidden = true;
-          var done = $('rb-done');
-          done.hidden = false;
-          if (r.preview) done.querySelector('p').textContent = 'Preview: the form works. Nothing was sent.';
-          done.focus();
-          return;
-        }
-        if (r.error === 'invalid' && r.fields) { showFieldErrors(rbForm, r.fields); setStatus(rbStatus, ''); return; }
-        throw new Error(r.error);
-      }).catch(function () {
-        setStatus(rbStatus, "That didn't go through. Try again in a minute, or email " + CONTACT + '.', true);
-      }).then(function () {
-        rbSending = false;
-        btn.disabled = false;
-      });
-    });
-  }
-
+  // Role page: read-only. Students apply from the dashboard, signed in.
   if (page === 'job') {
     var id = params.get('id') || '';
     var head = $('job-head');
-    var applyForm = $('apply-form');
-    var applyStatus = $('apply-status');
+    $('apply-signin').href = '../students/#job/' + encodeURIComponent(id);
 
     getJSON({ action: 'job', id: id }).then(function (r) {
       if (!r.ok) throw new Error(r.error);
@@ -244,7 +144,13 @@
       if (m) head.appendChild(el('p', 'job-meta', m));
       if (job.description) $('job-desc').textContent = job.description;
       var link = safeUrl(job.link);
-      if (link) {
+      if (link && job.external) {
+        // This company takes applications on its own site.
+        $('apply-text').textContent = 'This company takes applications on its own site.';
+        var btn = $('apply-signin');
+        btn.textContent = 'Apply on ' + job.company + "'s site ↗";
+        btn.href = link; btn.target = '_blank'; btn.rel = 'noopener';
+      } else if (link) {
         var a = el('a', 'text-link', 'Original posting ↗');
         a.href = link; a.target = '_blank'; a.rel = 'noopener';
         $('job-link').appendChild(a);
@@ -257,66 +163,9 @@
       var p = el('p', 'job-meta');
       p.append("It may have been filled or taken down. ");
       var back = el('a', 'text-link', 'See open roles');
-      back.href = './';
+      back.href = '../students/#jobs';
       p.appendChild(back);
       head.appendChild(p);
-    });
-
-    applyForm.addEventListener('input', function (e) {
-      var w = e.target.closest('.field');
-      if (w && w.classList.contains('has-error')) {
-        w.classList.remove('has-error');
-        var msg = w.querySelector('.field-error');
-        if (msg) msg.remove();
-        e.target.removeAttribute('aria-invalid');
-      }
-    });
-
-    var sending = false;
-    applyForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (sending) return;
-      setStatus(applyStatus, '');
-      var v = formValues(applyForm);
-      var file = applyForm.elements.resume.files[0];
-      var errs = [];
-      if (!v.name) errs.push({ field: 'name', message: 'Add your name.' });
-      if (!/^[^\s@]+@(students\.)?olin\.edu$/i.test(v.email)) errs.push({ field: 'email', message: 'Use your @olin.edu email.' });
-      if (!v.year) errs.push({ field: 'year', message: 'Pick your class year.' });
-      if (!file) errs.push({ field: 'resume', message: 'Attach your resume as a PDF.' });
-      else if (file.size > MAX_RESUME_BYTES || !/\.pdf$/i.test(file.name)) errs.push({ field: 'resume', message: 'Attach a PDF under 5 MB.' });
-      if (v.profile && !/^https?:\/\/\S+$/i.test(v.profile)) errs.push({ field: 'profile', message: 'Use a full link starting with https://' });
-      if (errs.length) { showFieldErrors(applyForm, errs); return; }
-
-      sending = true;
-      var btn = applyForm.querySelector('button[type="submit"]');
-      btn.disabled = true;
-      setStatus(applyStatus, 'Sending your application…');
-
-      readPdf(file).then(function (data) {
-        v.action = 'apply';
-        v.id = id;
-        v.resume = { name: file.name, data: data };
-        return postJSON(v);
-      }).then(function (r) {
-        if (r.ok) {
-          applyForm.hidden = true;
-          var done = $('apply-done');
-          done.hidden = false;
-          if (r.preview) done.querySelector('p').textContent = 'Preview: the form works. Nothing was sent.';
-          done.focus();
-          return;
-        }
-        if (r.error === 'invalid' && r.fields) { showFieldErrors(applyForm, r.fields); setStatus(applyStatus, ''); return; }
-        if (r.error === 'duplicate') { setStatus(applyStatus, "You've already applied to this role with that email.", true); return; }
-        if (r.error === 'closed') { setStatus(applyStatus, 'This role just closed, so your application was not sent.', true); return; }
-        throw new Error(r.error);
-      }).catch(function () {
-        setStatus(applyStatus, "Your application didn't go through. Try again in a minute, or email " + CONTACT + '.', true);
-      }).then(function () {
-        sending = false;
-        btn.disabled = false;
-      });
     });
   }
 

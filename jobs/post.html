@@ -11,6 +11,7 @@
   <link rel="icon" type="image/png" href="../logo-mark.png">
   <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="jobs.css">
+  <link rel="stylesheet" href="post.css">
 </head>
 <body data-page="post">
   <a class="skip" href="#main">Skip to content</a>
@@ -20,111 +21,131 @@
       <img class="brand-logo" src="../logo-wordmark.png" alt="Catalyst" width="931" height="331">
     </a>
     <nav aria-label="Primary">
-      <a href="../">About Catalyst</a>
-      <a href="./">Job Board</a>
+      <a href="../#elements">Elements</a>
+      <a href="../#grants">Grants</a>
+      <a href="../students/">Dashboard</a>
     </nav>
     <a class="btn btn-small" href="https://chat.whatsapp.com/IGC31NBMDbnJxJU4OeVjmu?mode=gi_t">Join</a>
   </header>
 
-  <main id="main" class="jobs">
+  <main id="main" class="hire">
     <p class="preview-note" id="preview-note" hidden>Preview mode: submitting sends nothing.</p>
 
-    <div class="section-head">
-      <h1>Hire from Olin Catalyst.</h1>
+    <div class="hire-layout">
+      <section class="hire-intro" aria-labelledby="hire-title">
+        <p class="label">For companies</p>
+        <h1 id="hire-title">Hire from Olin Catalyst.</h1>
+        <p class="hire-lede">Post a role for Olin College students. They apply with their resume, and every applicant lands in a spreadsheet we share with you.</p>
+
+        <ol class="hire-steps">
+          <li><span class="step-num">1</span><div><strong>Share your posting</strong><p>A link to your Glassdoor, LinkedIn, or careers page listing is enough.</p></div></li>
+          <li><span class="step-num">2</span><div><strong>Olin students apply</strong><p>It goes up on the Catalyst job board, where students sign in with their Olin email to apply.</p></div></li>
+          <li><span class="step-num">3</span><div><strong>You get the applicants</strong><p>Names, class years, and resumes, in one spreadsheet that updates as people apply.</p></div></li>
+        </ol>
+      </section>
+
+      <section class="card hire-card" aria-label="Post a role">
+        <div id="email-us" hidden>
+          <h2>Post a role</h2>
+          <p class="card-sub">Email us the link to your posting and we'll take it from there.</p>
+          <a class="btn" href="mailto:lcondearaujo@olin.edu?subject=Job%20posting%20for%20Olin%20students&amp;body=Company%3A%20%0ARole%3A%20%0ALocation%3A%20%0ALink%20to%20the%20posting%3A%20%0AApply%20by%20(optional)%3A%20%0A%0AInterested%20in%20Olin%27s%20career%20fair%3F%20Yes%20%2F%20No%0A">Email us your posting</a>
+          <p class="hint">Or write to <a href="mailto:lcondearaujo@olin.edu">lcondearaujo@olin.edu</a></p>
+        </div>
+
+        <div id="no-invite" hidden>
+          <h2>You need a posting link</h2>
+          <p class="card-sub">Posting is by invitation. Email <a href="mailto:lcondearaujo@olin.edu?subject=Posting%20a%20job%20for%20Olin%20students">lcondearaujo@olin.edu</a> and we'll send you one.</p>
+        </div>
+
+        <form class="form" id="post-form" novalidate>
+          <div class="form-row">
+            <div class="field">
+              <label for="company">Company</label>
+              <input id="company" name="company" autocomplete="organization" required>
+            </div>
+            <div class="field">
+              <label for="role">Role title</label>
+              <input id="role" name="role" placeholder="Software Engineering Intern" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="location">Location <span class="optional">optional</span></label>
+              <input id="location" name="location" placeholder="Boston, MA · Remote">
+            </div>
+            <div class="field">
+              <label for="type">Type</label>
+              <select id="type" name="type">
+                <option>Internship</option>
+                <option>Full-time</option>
+                <option>Part-time</option>
+                <option>Co-op</option>
+                <option>Contract</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="link">Link to the posting <span class="optional">optional</span></label>
+            <input id="link" name="link" type="url" placeholder="https://www.glassdoor.com/job-listing/…">
+          </div>
+          <div class="field">
+            <label for="description">Job description</label>
+            <textarea id="description" name="description" placeholder="Paste the description here. Plain text is fine."></textarea>
+            <p class="hint">Paste it from your Glassdoor posting. You can skip this if you added a link.</p>
+          </div>
+          <div class="field">
+            <label for="deadline">Apply by <span class="optional">optional</span></label>
+            <input id="deadline" name="deadline" type="date">
+            <p class="hint">The posting comes down after this date.</p>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="contactName">Your name</label>
+              <input id="contactName" name="contactName" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label for="contactEmail">Your email</label>
+              <input id="contactEmail" name="contactEmail" type="email" autocomplete="email" required>
+              <p class="hint">We share the applicant spreadsheet with this address. A Google account works best.</p>
+            </div>
+          </div>
+          <div class="hp" aria-hidden="true">
+            <label for="website">Leave this empty</label>
+            <input id="website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="form-actions">
+            <button class="btn" type="submit">Post the role</button>
+            <p class="form-status" id="post-status" role="status"></p>
+          </div>
+        </form>
+
+        <div class="done" id="post-done" tabindex="-1" hidden>
+          <h2 id="done-title">You're posted.</h2>
+          <p id="done-live">Olin students can see and apply to your role now.</p>
+          <p>We sent <strong id="done-email"></strong> a link to your applicant spreadsheet. New applicants show up there, with their resumes, as they apply.</p>
+          <a class="btn btn-invert" id="done-view" href="./">See your posting</a>
+        </div>
+      </section>
     </div>
 
-    <div class="notice" id="email-us" hidden>
-      <h2>Post a role by email</h2>
-      <p>Send us the link to your Glassdoor (or LinkedIn, or careers page) posting, and we'll share it with Olin students and send you the applicants.</p>
-      <div class="form-actions">
-        <a class="btn" href="mailto:lcondearaujo@olin.edu?subject=Job%20posting%20for%20Olin%20students&amp;body=Company%3A%20%0ARole%3A%20%0ALocation%3A%20%0ALink%20to%20the%20posting%3A%20%0AApply%20by%20(optional)%3A%20%0A%0AInterested%20in%20Olin%27s%20career%20fair%3F%20Yes%20%2F%20No%0A">Email us your posting</a>
-      </div>
-    </div>
-
-    <div class="notice" id="no-invite" hidden>
-      <h2>You need a posting link</h2>
-      <p>Posting is by invitation. Email <a href="mailto:lcondearaujo@olin.edu?subject=Posting%20a%20job%20for%20Olin%20students">lcondearaujo@olin.edu</a> and we'll send you one.</p>
-    </div>
-
-    <form class="form" id="post-form" novalidate>
-      <div class="form-row">
-        <div class="field">
-          <label for="company">Company</label>
-          <input id="company" name="company" autocomplete="organization" required>
-        </div>
-        <div class="field">
-          <label for="role">Role title</label>
-          <input id="role" name="role" placeholder="Software Engineering Intern" required>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="field">
-          <label for="location">Location <span class="optional">optional</span></label>
-          <input id="location" name="location" placeholder="Boston, MA · Remote">
-        </div>
-        <div class="field">
-          <label for="type">Type</label>
-          <select id="type" name="type">
-            <option>Internship</option>
-            <option>Full-time</option>
-            <option>Part-time</option>
-            <option>Co-op</option>
-            <option>Contract</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label for="link">Link to the posting <span class="optional">optional</span></label>
-        <input id="link" name="link" type="url" placeholder="https://www.glassdoor.com/job-listing/…">
-      </div>
-      <div class="field">
-        <label for="description">Job description</label>
-        <textarea id="description" name="description" placeholder="Paste the description here. Plain text is fine."></textarea>
-        <p class="hint">Paste it from your Glassdoor posting. You can skip this if you added a link.</p>
-      </div>
-      <div class="field">
-        <label for="deadline">Apply by <span class="optional">optional</span></label>
-        <input id="deadline" name="deadline" type="date">
-        <p class="hint">The posting comes down after this date.</p>
-      </div>
-      <div class="form-row">
-        <div class="field">
-          <label for="contactName">Your name</label>
-          <input id="contactName" name="contactName" autocomplete="name" required>
-        </div>
-        <div class="field">
-          <label for="contactEmail">Your email</label>
-          <input id="contactEmail" name="contactEmail" type="email" autocomplete="email" required>
-          <p class="hint">We share the applicant spreadsheet with this address. A Google account works best.</p>
-        </div>
-      </div>
-      <div class="hp" aria-hidden="true">
-        <label for="website">Leave this empty</label>
-        <input id="website" name="website" tabindex="-1" autocomplete="off">
-      </div>
-      <div class="form-actions">
-        <button class="btn" type="submit">Post the role</button>
-        <p class="form-status" id="post-status" role="status"></p>
-      </div>
-    </form>
-
-    <div class="done" id="post-done" tabindex="-1" hidden>
-      <h2 id="done-title">You're posted.</h2>
-      <p id="done-live">Olin students can see and apply to your role now.</p>
-      <p>We sent <strong id="done-email"></strong> a link to your applicant spreadsheet. New applicants show up there, with their resumes, as they apply.</p>
-      <a class="btn btn-invert" id="done-view" href="./">See your posting</a>
-    </div>
-
-    <aside class="fair">
-      <h2>Meet students in person, too.</h2>
-      <p>Catalyst also helps bring companies to Olin's career fair. If you'd like a table, or want to know when the next fair is, email <a href="mailto:kcasasanto@olin.edu?subject=Olin%20career%20fair">kcasasanto@olin.edu</a> and we'll connect you with the organizers.</p>
-    </aside>
+    <section class="hire-more" aria-labelledby="more-title">
+      <h2 id="more-title" class="label">More ways to reach Oliners</h2>
+      <ul class="more-list">
+        <li>
+          <div><strong>Olin's career fair</strong><p>Want a table, or to hear when the next fair is? We'll connect you with the organizers.</p></div>
+          <a class="more-link" href="mailto:kcasasanto@olin.edu?subject=Olin%20career%20fair">kcasasanto@olin.edu ↗</a>
+        </li>
+        <li>
+          <div><strong>The Catalyst resume book</strong><p>Olin students who opted in to hear from companies, with their resumes and what they're looking for.</p></div>
+          <a class="more-link" href="mailto:lcondearaujo@olin.edu?subject=Catalyst%20resume%20book">Ask for it ↗</a>
+        </li>
+      </ul>
+    </section>
   </main>
 
   <footer class="footer">
     <img class="footer-logo" src="../logo-mark.png" alt="" width="930" height="167">
     <p>Catalyst · Franklin W. Olin College of Engineering · Needham, MA</p>
-    <p class="muted">Student-run. Open to everyone at Olin.</p>
   </footer>
 
   <script src="jobs.js"></script>

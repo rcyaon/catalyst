@@ -1,0 +1,59 @@
+/* "Hire from Olin Catalyst" page for companies. Builds on ../styles.css and jobs.css.
+   Same quiet style as the student dashboard: thin borders, one card with the main action. */
+
+.hire {
+  --surface: #fbf8f1;
+  --line: #d9d2c3;
+  max-width: 1120px; margin: 0 auto;
+  padding: clamp(36px, 6vw, 80px) clamp(16px, 4vw, 40px) clamp(64px, 9vw, 112px);
+}
+.hire .preview-note { margin-bottom: 24px; }
+
+.hire-layout { display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: clamp(32px, 5vw, 72px); align-items: start; }
+
+/* pitch */
+.hire-intro h1 { margin: 10px 0 16px; font-size: clamp(2.4rem, 6vw, 4rem); line-height: 1; font-weight: 800; letter-spacing: -.025em; }
+.hire-lede { max-width: 30em; font-size: 1.12rem; color: var(--ink-soft); }
+
+.hire-steps { list-style: none; margin: 40px 0 0; padding: 0; border-top: 1.5px solid var(--ink); }
+.hire-steps li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.step-num {
+  display: grid; place-items: center; width: 34px; height: 34px;
+  font-family: var(--mono); font-size: .85rem; font-weight: 700;
+  background: var(--ink); color: var(--paper);
+}
+.hire-steps li:first-child .step-num { background: var(--flame); color: var(--ink); }
+.hire-steps strong { display: block; font-size: 1.08rem; }
+.hire-steps p { margin-top: 2px; font-size: .95rem; color: var(--ink-soft); }
+
+/* action card */
+.card { background: var(--surface); border: 1.5px solid var(--ink); padding: clamp(22px, 3vw, 30px); }
+.hire-card { position: sticky; top: 96px; box-shadow: 6px 6px 0 var(--ink); }
+.hire-card h2 { font-size: 1.5rem; margin-bottom: 6px; }
+.card-sub { color: var(--ink-soft); margin-bottom: 20px; }
+.card-sub a, .hire-card .hint a { color: var(--ink); font-weight: 600; }
+.hire-card .hint { margin-top: 16px; }
+.hire-card .form { gap: 14px; }
+.hire-card .form-row { grid-template-columns: 1fr; gap: 14px; }
+.hire-card textarea { min-height: 140px; }
+.hire .field input, .hire .field select, .hire .field textarea { border-width: 1.5px; }
+
+/* more ways */
+.hire-more { margin-top: clamp(48px, 7vw, 80px); }
+.hire-more h2 { margin-bottom: 10px; }
+.more-list { list-style: none; margin: 0; padding: 0; border-top: 1.5px solid var(--ink); }
+.more-list li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.more-list li > div { flex: 1 1 320px; }
+.more-list strong { font-size: 1.08rem; }
+.more-list p { margin-top: 2px; font-size: .95rem; color: var(--ink-soft); max-width: 40em; }
+.more-link { flex: none; font-family: var(--mono); font-size: .8rem; font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--flame); }
+.more-link:hover { color: var(--flame); }
+
+@media (max-width: 960px) {
+  .hire-layout { grid-template-columns: 1fr; }
+  .hire-card { position: static; }
+  .hire-card .form-row { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .hire-card .form-row { grid-template-columns: 1fr; }
+}

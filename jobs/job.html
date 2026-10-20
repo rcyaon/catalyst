@@ -22,15 +22,15 @@
     <nav aria-label="Primary">
       <a href="../#elements">Elements</a>
       <a href="../#grants">Grants</a>
-      <a href="./">Job Board</a>
+      <a href="../students/">Dashboard</a>
     </nav>
     <a class="btn btn-small" href="https://chat.whatsapp.com/IGC31NBMDbnJxJU4OeVjmu?mode=gi_t">Join</a>
   </header>
 
   <main id="main" class="jobs">
-    <p class="preview-note" id="preview-note" hidden>Preview mode: sample job. Applying here sends nothing.</p>
+    <p class="preview-note" id="preview-note" hidden>Preview mode: sample job.</p>
 
-    <a class="back" href="./">← All jobs</a>
+    <a class="back" href="../students/#jobs">← All jobs</a>
 
     <div class="job-head" id="job-head" aria-live="polite">
       <p class="job-meta">Loading…</p>
@@ -43,62 +43,9 @@
 
     <section class="apply" id="apply" aria-labelledby="apply-title" hidden>
       <h2 id="apply-title">Apply as an Oliner</h2>
-      <p>Your details and resume go straight to the person hiring.</p>
-
-      <form class="form" id="apply-form" novalidate>
-        <div class="form-row">
-          <div class="field">
-            <label for="name">Full name</label>
-            <input id="name" name="name" autocomplete="name" required>
-          </div>
-          <div class="field">
-            <label for="email">Olin email</label>
-            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@olin.edu" required>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="field">
-            <label for="year">Class year</label>
-            <select id="year" name="year" required>
-              <option value="">Choose…</option>
-              <option>2027</option>
-              <option>2028</option>
-              <option>2029</option>
-              <option>2030</option>
-              <option>Alum</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="major">Major <span class="optional">optional</span></label>
-            <input id="major" name="major" placeholder="ECE, MechE, E:C, …">
-          </div>
-        </div>
-        <div class="field">
-          <label for="resume">Resume</label>
-          <input id="resume" name="resume" type="file" accept="application/pdf,.pdf" required>
-          <p class="hint">PDF, up to 5 MB</p>
-        </div>
-        <div class="field">
-          <label for="profile">LinkedIn or portfolio <span class="optional">optional</span></label>
-          <input id="profile" name="profile" type="url" placeholder="https://">
-        </div>
-        <div class="field">
-          <label for="note">Anything you want them to know? <span class="optional">optional</span></label>
-          <textarea id="note" name="note" maxlength="1500" style="min-height:110px"></textarea>
-        </div>
-        <div class="hp" aria-hidden="true">
-          <label for="website">Leave this empty</label>
-          <input id="website" name="website" tabindex="-1" autocomplete="off">
-        </div>
-        <div class="form-actions">
-          <button class="btn" type="submit">Send application</button>
-          <p class="form-status" id="apply-status" role="status"></p>
-        </div>
-      </form>
-
-      <div class="done" id="apply-done" tabindex="-1" hidden>
-        <h3>Application sent.</h3>
-        <p>It's in the company's applicant list now. They'll reach out by email if it's a fit.</p>
+      <p id="apply-text">Olin students apply from the Catalyst dashboard. Sign in with your @olin.edu email and your resume goes straight to the person hiring.</p>
+      <div class="form-actions">
+        <a class="btn" id="apply-signin" href="../students/#jobs">Sign in to apply</a>
       </div>
     </section>
   </main>
@@ -106,7 +53,6 @@
   <footer class="footer">
     <img class="footer-logo" src="../logo-mark.png" alt="" width="930" height="167">
     <p>Catalyst · Franklin W. Olin College of Engineering · Needham, MA</p>
-    <p class="muted">Student-run. Open to everyone at Olin.</p>
   </footer>
 
   <script src="jobs.js"></script>

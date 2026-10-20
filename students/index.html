@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Dashboard · Catalyst</title>
+  <meta name="description" content="Olin students: sign in with your @olin.edu email to browse and apply to jobs, join the resume book, and see what's on at Catalyst.">
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="../logo-mark.png">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../jobs/jobs.css">
+  <link rel="stylesheet" href="students.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav scrolled">
+    <a class="brand" href="../" aria-label="Catalyst home">
+      <img class="brand-logo" src="../logo-wordmark.png" alt="Catalyst" width="931" height="331">
+    </a>
+    <nav aria-label="Primary">
+      <a href="../#elements">Elements</a>
+      <a href="../#grants">Grants</a>
+      <a href="./" aria-current="page">Dashboard</a>
+    </nav>
+    <a class="btn btn-small" href="https://chat.whatsapp.com/IGC31NBMDbnJxJU4OeVjmu?mode=gi_t">Join</a>
+  </header>
+
+  <main id="main" class="sd">
+    <p class="preview-note" id="preview-note" hidden>Preview mode: any code works and the data is made up. Connect the backend in students/students.js to go live.</p>
+
+    <!-- Step 1: email -->
+    <section class="card gate" id="step-email" aria-labelledby="email-title" hidden>
+      <p class="label">Olin students</p>
+      <h1 id="email-title">Your Catalyst dashboard</h1>
+      <p>The Catalyst job board and resume book, for Olin students. Enter your Olin email and we'll send you a 6-digit code.</p>
+      <form class="form" id="email-form" novalidate>
+        <div class="field">
+          <label for="email">Olin email</label>
+          <input id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@olin.edu" required>
+        </div>
+        <div class="hp" aria-hidden="true">
+          <label for="website">Leave this empty</label>
+          <input id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+        <div class="form-actions">
+          <button class="btn" type="submit">Send me a code</button>
+          <p class="form-status" id="email-status" role="status"></p>
+        </div>
+      </form>
+    </section>
+
+    <!-- Step 2: code -->
+    <section class="card gate" id="step-code" aria-labelledby="code-title" hidden>
+      <p class="label">Check your inbox</p>
+      <h1 id="code-title">Enter your code</h1>
+      <p>We sent a 6-digit code to <strong id="code-email"></strong>. It works for 10 minutes.</p>
+      <form class="form" id="code-form" novalidate>
+        <div class="field">
+          <label for="code">Code</label>
+          <input id="code" name="code" class="code-input" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" placeholder="000000" required>
+        </div>
+        <div class="form-actions">
+          <button class="btn" type="submit">Sign in</button>
+          <p class="form-status" id="code-status" role="status"></p>
+        </div>
+      </form>
+      <p class="gate-foot">
+        <button class="link-btn" type="button" id="resend">Send a new code</button>
+        <span aria-hidden="true">·</span>
+        <button class="link-btn" type="button" id="change-email">Use a different email</button>
+      </p>
+    </section>
+
+    <p class="loading" id="loading" role="status">Loading your dashboard…</p>
+
+    <!-- Step 3: dashboard -->
+    <section class="dash" id="dash" aria-label="Student dashboard" hidden>
+      <aside class="side">
+        <nav class="tabs" aria-label="Dashboard">
+          <a href="#overview" data-tab="overview">Overview</a>
+          <a href="#jobs" data-tab="jobs">Job board <span class="tab-count" id="tab-jobs-count"></span></a>
+          <a href="#opportunities" data-tab="opportunities">Opportunities <span class="tab-count" id="tab-opps-count"></span></a>
+          <a href="#resume" data-tab="resume">Resume book</a>
+        </nav>
+
+        <div class="side-links">
+          <p class="label">Around Catalyst</p>
+          <ul class="links">
+            <li><a href="https://luma.com/olincatalyst" target="_blank" rel="noopener"><strong>Events</strong><span>Speakers and workshops on Luma</span></a></li>
+            <li><a href="mailto:lcarlin@olin.edu,cphillips@olin.edu,lcondearaujo@olin.edu?subject=Catalyst%20grant"><strong>Ask for a grant</strong><span>Up to $1,000 for your project</span></a></li>
+            <li><a href="https://chat.whatsapp.com/IGC31NBMDbnJxJU4OeVjmu?mode=gi_t" target="_blank" rel="noopener"><strong>Group chat</strong><span>Meetings and announcements</span></a></li>
+            <li><a href="../hackathon/"><strong>Hackathon</strong><span>Dates, sign-up, and FAQ</span></a></li>
+          </ul>
+        </div>
+
+        <div class="account">
+          <span class="account-email" id="dash-email"></span>
+          <button class="link-btn" type="button" id="sign-out">Sign out</button>
+        </div>
+      </aside>
+
+      <div class="content">
+        <!-- Overview -->
+        <div class="view" id="view-overview" hidden>
+          <header class="view-head">
+            <h1 id="dash-title">Hi there.</h1>
+            <p class="view-sub" id="overview-sub"></p>
+          </header>
+
+          <div class="status" id="rb-summary"></div>
+
+          <section class="block" aria-labelledby="new-title">
+            <div class="block-head">
+              <h2 id="new-title">New on the job board</h2>
+              <a class="more" href="#jobs">See all roles →</a>
+            </div>
+            <ul class="roles" id="new-jobs"></ul>
+            <p class="none" id="new-empty" hidden>No open roles right now. <a href="#resume">Join the resume book</a> and companies can find you.</p>
+          </section>
+        </div>
+
+        <!-- Job board -->
+        <div class="view" id="view-jobs" hidden>
+          <header class="view-head">
+            <h1>Job board</h1>
+            <p class="view-sub">Internships and jobs shared with Catalyst for Olin students.</p>
+          </header>
+          <div class="board-tools">
+            <label class="search">
+              <span class="sr-only">Search roles</span>
+              <input id="job-search" type="search" placeholder="Search roles, companies, places…" autocomplete="off">
+            </label>
+            <div class="filters" id="job-filters" role="group" aria-label="Filter by type"></div>
+          </div>
+          <ul class="roles" id="all-jobs"></ul>
+          <p class="none" id="jobs-empty" hidden>No open roles right now. <a href="#resume">Join the resume book</a> so companies can find you in the meantime.</p>
+          <p class="none" id="jobs-nomatch" hidden>No roles match that. <button class="link-btn" type="button" id="clear-filters">Clear filters</button></p>
+        </div>
+
+        <!-- One role -->
+        <div class="view" id="view-job" hidden>
+          <a class="back" href="#jobs">← All roles</a>
+          <div class="role-layout">
+            <article class="role-main">
+              <div class="job-head" id="job-head"></div>
+              <div class="job-desc" id="job-desc"></div>
+              <p id="job-link"></p>
+            </article>
+
+            <section class="card apply-card" id="apply" aria-labelledby="apply-title">
+              <h2 id="apply-title">Apply</h2>
+              <p class="card-sub" id="apply-sub">Sent from <strong class="me-email"></strong> with your resume, straight to the person hiring.</p>
+
+              <div id="apply-external" hidden>
+                <p class="card-sub">This company takes applications on its own site.</p>
+                <a class="btn" id="ext-link" href="#" target="_blank" rel="noopener">Apply on <span id="ext-company"></span>'s site ↗</a>
+              </div>
+
+              <form class="form" id="apply-form" novalidate>
+                <div class="field">
+                  <label for="ap-name">Full name</label>
+                  <input id="ap-name" name="name" autocomplete="name" required>
+                </div>
+                <div class="form-row">
+                  <div class="field">
+                    <label for="ap-year">Class year</label>
+                    <select id="ap-year" name="year" required>
+                  <option value="">Choose…</option>
+                  <option>2027</option>
+                  <option>2028</option>
+                  <option>2029</option>
+                  <option>2030</option>
+                  <option>Alum</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="ap-major">Major <span class="optional">optional</span></label>
+                    <input id="ap-major" name="major" placeholder="ECE, MechE…">
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="ap-resume">Resume</label>
+                  <input id="ap-resume" name="resume" type="file" accept="application/pdf,.pdf" required>
+                  <p class="hint">PDF, up to 5 MB</p>
+                </div>
+                <div class="field">
+                  <label for="ap-profile">LinkedIn or portfolio <span class="optional">optional</span></label>
+                  <input id="ap-profile" name="profile" type="url" placeholder="https://">
+                </div>
+                <div class="field">
+                  <label for="ap-note">Note to the company <span class="optional">optional</span></label>
+                  <textarea id="ap-note" name="note" maxlength="1500"></textarea>
+                </div>
+                <div class="form-actions">
+                  <button class="btn" type="submit">Send application</button>
+                  <p class="form-status" id="apply-status" role="status"></p>
+                </div>
+              </form>
+
+              <div class="done" id="apply-done" tabindex="-1" hidden>
+                <h3>Application sent.</h3>
+                <p>It's in the company's applicant list now. They'll reach out by email if it's a fit.</p>
+                <a class="btn btn-invert" href="#jobs">Back to all roles</a>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Opportunities -->
+        <div class="view" id="view-opportunities" hidden>
+          <header class="view-head">
+            <h1>Opportunities</h1>
+            <p class="view-sub">Grants, programs, events, and other things worth a look, posted by Catalyst.</p>
+          </header>
+          <ul class="opps" id="opps-list"></ul>
+          <p class="none" id="opps-empty" hidden>Nothing posted right now. Check back soon.</p>
+        </div>
+
+        <!-- Resume book -->
+        <div class="view" id="view-resume" hidden>
+          <header class="view-head">
+            <h1 id="rb-title">Resume book</h1>
+            <p class="view-sub">Catalyst shares it with companies looking to hire from Olin, so they can reach out to you directly.</p>
+          </header>
+          <div id="rb-current"></div>
+
+          <section class="card" aria-labelledby="rb-title">
+            <form class="form" id="rb-form" novalidate>
+              <div class="form-row">
+                <div class="field">
+                  <label for="rb-name">Full name</label>
+                  <input id="rb-name" name="name" autocomplete="name" required>
+                </div>
+                <div class="field">
+                  <label for="rb-year">Class year</label>
+                  <select id="rb-year" name="year" required>
+                  <option value="">Choose…</option>
+                  <option>2027</option>
+                  <option>2028</option>
+                  <option>2029</option>
+                  <option>2030</option>
+                  <option>Alum</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="field">
+                  <label for="rb-major">Major <span class="optional">optional</span></label>
+                  <input id="rb-major" name="major" placeholder="ECE, MechE, E:C, …">
+                </div>
+                <div class="field">
+                  <label for="rb-profile">LinkedIn or portfolio <span class="optional">optional</span></label>
+                  <input id="rb-profile" name="profile" type="url" placeholder="https://">
+                </div>
+              </div>
+              <div class="field">
+                <label for="rb-resume">Resume</label>
+                <input id="rb-resume" name="resume" type="file" accept="application/pdf,.pdf" required>
+                <p class="hint">PDF, up to 5 MB. A new one replaces the old one.</p>
+              </div>
+              <fieldset class="field checks">
+                <legend>Looking for <span class="optional">optional</span></legend>
+                <label><input type="checkbox" name="lookingFor" value="Internship"> Internship</label>
+                <label><input type="checkbox" name="lookingFor" value="Full-time"> Full-time</label>
+                <label><input type="checkbox" name="lookingFor" value="Co-op"> Co-op</label>
+                <label><input type="checkbox" name="lookingFor" value="Part-time"> Part-time</label>
+              </fieldset>
+              <div class="field consent">
+                <label><input type="checkbox" name="consent" value="yes"> Catalyst can share my resume and contact info with companies hiring from Olin.</label>
+              </div>
+              <div class="form-actions">
+                <button class="btn" type="submit">Add me to the resume book</button>
+                <p class="form-status" id="rb-status" role="status"></p>
+              </div>
+            </form>
+
+            <div class="done" id="rb-done" tabindex="-1" hidden>
+              <h3>Resume submitted.</h3>
+              <p>We'll share it with companies hiring from Olin. Come back here any time to send a newer one.</p>
+              <a class="btn btn-invert" href="#overview">Back to overview</a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="notice" id="error" hidden>
+      <h2>The dashboard didn't load.</h2>
+      <p id="error-msg">Try again in a minute.</p>
+      <div class="form-actions"><button class="btn" type="button" id="retry">Try again</button></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <img class="footer-logo" src="../logo-mark.png" alt="" width="930" height="167">
+    <p>Catalyst · Franklin W. Olin College of Engineering · Needham, MA</p>
+  </footer>
+
+  <script src="students.js"></script>
+</body>
+</html>

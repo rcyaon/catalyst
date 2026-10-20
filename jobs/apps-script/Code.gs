@@ -16,6 +16,9 @@
  *   - An Olin student applies → their resume PDF goes into that folder and a row goes
  *     into that company's spreadsheet (and into the "Applications" tab here, for Catalyst).
  *   - To take a posting down, change its Status cell in "Postings" to Closed.
+ *   - Student dashboard (/students/): an Olin student enters their email, gets a 6-digit
+ *     code by email, and enters it. The job board lives there: students browse roles, apply,
+ *     and join the resume book while signed in, so every application email is verified.
  */
 
 const DEFAULT_SITE_URL = 'https://rcyaon.github.io/catalyst/jobs/';
@@ -39,6 +42,16 @@ const APPLICANT_COLUMNS = [
   'Submitted', 'Name', 'Email', 'Class year', 'Major', 'Resume', 'LinkedIn / portfolio', 'Note'
 ];
 const ALL_APPLICATION_COLUMNS = ['Posting ID', 'Company', 'Role'].concat(APPLICANT_COLUMNS);
+// Anything Catalyst wants students to see: grants, programs, events, lists. Add a row to post
+// it; set Status to Hidden to take it down. Shows in the dashboard's Opportunities tab.
+const OPPORTUNITY_COLUMNS = ['Added', 'Status', 'Title', 'Details', 'Link', 'Category'];
+const FIRST_OPPORTUNITY = {
+  'Added': '2026-10-20', 'Status': 'Live',
+  'Title': 'Grants, houses, and labs for builders',
+  'Details': 'A community-run list of grants, fellowships, hacker houses, and labs for young builders, with amounts and who each one funds. By @nosilverv and @dstrachman.',
+  'Link': 'https://docs.google.com/spreadsheets/d/1JTNfDeRXZKR5hEF3WYIBpi2Wu8QAeghFwJvJ53DrJWo/edit?gid=0#gid=0',
+  'Category': 'Funding'
+};
 const RESUME_BOOK_COLUMNS = [
   'Updated', 'Name', 'Email', 'Class year', 'Major', 'Looking for', 'Resume', 'LinkedIn / portfolio'
 ];
@@ -67,6 +80,16 @@ function doPost(e) {
   // Honeypot: a hidden field people never fill in, but bots do.
   if (body.website) return json_({ ok: true });
 
+  // Read-only, so it skips the lock below.
+  if (body.action === 'me') {
+    try {
+      return json_(me_(body));
+    } catch (err) {
+      console.error(err && err.stack || err);
+      return json_({ ok: false, error: 'server' });
+    }
+  }
+
   const lock = LockService.getScriptLock();
   try {
     lock.waitLock(25000);
@@ -77,6 +100,8 @@ function doPost(e) {
     if (body.action === 'post') return json_(createPosting_(body));
     if (body.action === 'apply') return json_(apply_(body));
     if (body.action === 'resumebook') return json_(resumeBook_(body));
+    if (body.action === 'sendcode') return json_(sendCode_(body));
+    if (body.action === 'verify') return json_(verifyCode_(body));
     return json_({ ok: false, error: 'bad_action' });
   } catch (err) {
     console.error(err && err.stack || err);
@@ -169,10 +194,15 @@ function apply_(b) {
   const found = findPosting_(postings, String(b.id || ''));
   if (!found || found.job['Status'] !== 'Live' || isPastDeadline_(found.job)) return { ok: false, error: 'closed' };
   const job = found.job;
+  if (isExternal_(job)) return { ok: false, error: 'external' };
+
+  // Students apply from the dashboard, signed in, so the email is one they've proven they own.
+  const email = readToken_(String(b.token || ''));
+  if (!email) return { ok: false, error: 'auth' };
 
   const d = {
     name: clean_(b.name, 120),
-    email: clean_(b.email, 200).toLowerCase(),
+    email: email,
     year: clean_(b.year, 20),
     major: clean_(b.major, 80),
     profile: clean_(b.profile, 500),
@@ -180,7 +210,6 @@ function apply_(b) {
   };
   const fields = [];
   if (!d.name) fields.push(['name', 'Add your name.']);
-  if (!/^[^\s@]+@(students\.)?olin\.edu$/.test(d.email)) fields.push(['email', 'Use your @olin.edu email.']);
   if (!d.year) fields.push(['year', 'Pick your class year.']);
   if (d.profile && !/^https?:\/\/\S+$/i.test(d.profile)) fields.push(['profile', 'Use a full link starting with https://']);
 
@@ -243,9 +272,12 @@ function apply_(b) {
 // Olin students sign up to have their resume shared with companies.
 // One row per email: signing up again replaces the resume and updates the row.
 function resumeBook_(b) {
+  const email = readToken_(String(b.token || ''));
+  if (!email) return { ok: false, error: 'auth' };
+
   const d = {
     name: clean_(b.name, 120),
-    email: clean_(b.email, 200).toLowerCase(),
+    email: email,
     year: clean_(b.year, 20),
     major: clean_(b.major, 80),
     lookingFor: clean_(b.lookingFor, 120),
@@ -253,7 +285,6 @@ function resumeBook_(b) {
   };
   const fields = [];
   if (!d.name) fields.push(['name', 'Add your name.']);
-  if (!/^[^\s@]+@(students\.)?olin\.edu$/.test(d.email)) fields.push(['email', 'Use your @olin.edu email.']);
   if (!d.year) fields.push(['year', 'Pick your class year.']);
   if (d.profile && !/^https?:\/\/\S+$/i.test(d.profile)) fields.push(['profile', 'Use a full link starting with https://']);
   if (b.consent !== 'yes') fields.push(['consent', 'Check this so we can share your resume.']);
@@ -308,6 +339,172 @@ function resumeBookFolder_() {
   const folder = rootFolder_().createFolder('Resume Book');
   props.setProperty('RESUME_BOOK_FOLDER_ID', folder.getId());
   return folder;
+}
+
+// ---------- student dashboard sign-in ----------
+//
+// 1. sendcode: emails a 6-digit code to an @olin.edu address. The code is kept (hashed) in
+//    CacheService for 10 minutes. One code per minute and 5 per hour per address.
+// 2. verify: checks the code (5 tries per code) and returns a signed session token.
+// 3. me: takes the token and returns that student's dashboard data.
+//
+// The token is "<payload>.<signature>", signed with SESSION_SECRET (made automatically the
+// first time). Changing or deleting SESSION_SECRET in Script Properties signs everyone out.
+
+const CODE_TTL_SECONDS = 10 * 60;
+const CODE_MAX_TRIES = 5;
+const CODES_PER_HOUR = 5;
+const SESSION_DAYS = 30;
+
+function isOlinEmail_(s) {
+  return /^[^\s@]+@(students\.)?olin\.edu$/.test(s);
+}
+
+function sendCode_(b) {
+  const email = clean_(b.email, 200).toLowerCase();
+  if (!isOlinEmail_(email)) return fieldErrors_([['email', 'Use your @olin.edu email.']]);
+
+  const cache = CacheService.getScriptCache();
+  if (cache.get('code-wait:' + email)) return { ok: false, error: 'wait' };
+  const sent = Number(cache.get('code-count:' + email)) || 0;
+  if (sent >= CODES_PER_HOUR) return { ok: false, error: 'too_many' };
+  if (MailApp.getRemainingDailyQuota() < 1) return { ok: false, error: 'quota' };
+
+  // UUIDs are random, so 12 hex digits from one make an unbiased-enough 6-digit code.
+  const code = String(parseInt(Utilities.getUuid().replace(/-/g, '').slice(0, 12), 16) % 1000000);
+  const padded = ('000000' + code).slice(-6);
+
+  cache.put('code:' + email, JSON.stringify({ h: hash_(email + ':' + padded), tries: 0 }), CODE_TTL_SECONDS);
+  cache.put('code-wait:' + email, '1', 60);
+  cache.put('code-count:' + email, String(sent + 1), 3600);
+
+  MailApp.sendEmail({
+    to: email,
+    subject: padded + ' is your Catalyst sign-in code',
+    name: 'Catalyst at Olin',
+    body: 'Your code for the Catalyst student dashboard is:\n\n    ' + padded + '\n\n' +
+      'It works for 10 minutes. If you didn\'t ask for it, you can ignore this email.\n\n' +
+      'Catalyst at Olin'
+  });
+  return { ok: true };
+}
+
+function verifyCode_(b) {
+  const email = clean_(b.email, 200).toLowerCase();
+  const code = String(b.code || '').replace(/\D/g, '');
+  if (!isOlinEmail_(email)) return { ok: false, error: 'bad_code' };
+
+  const cache = CacheService.getScriptCache();
+  const raw = cache.get('code:' + email);
+  if (!raw) return { ok: false, error: 'expired' };
+  const saved = JSON.parse(raw);
+  if (saved.tries >= CODE_MAX_TRIES) {
+    cache.remove('code:' + email);
+    return { ok: false, error: 'expired' };
+  }
+  if (code.length !== 6 || hash_(email + ':' + code) !== saved.h) {
+    saved.tries++;
+    if (saved.tries >= CODE_MAX_TRIES) cache.remove('code:' + email);
+    else cache.put('code:' + email, JSON.stringify(saved), CODE_TTL_SECONDS);
+    return { ok: false, error: 'bad_code', triesLeft: CODE_MAX_TRIES - saved.tries };
+  }
+  cache.remove('code:' + email);
+  return { ok: true, token: makeToken_(email), email: email };
+}
+
+function me_(b) {
+  const email = readToken_(String(b.token || ''));
+  if (!email) return { ok: false, error: 'auth' };
+
+  const applications = readRecords_(sheet_('Applications', ALL_APPLICATION_COLUMNS)).rows
+    .filter(function (r) { return String(r['Email']).toLowerCase() === email; })
+    .reverse()
+    .map(function (r) {
+      return {
+        id: String(r['Posting ID']),
+        company: String(r['Company']),
+        role: String(r['Role']),
+        submitted: r['Submitted'] instanceof Date ? r['Submitted'].toISOString() : String(r['Submitted'])
+      };
+    });
+
+  const rb = readRecords_(sheet_('Resume Book', RESUME_BOOK_COLUMNS)).rows
+    .filter(function (r) { return String(r['Email']).toLowerCase() === email; })[0];
+
+  const live = livePostings_();
+  const liveIds = live.map(function (j) { return String(j['ID']); });
+  applications.forEach(function (a) { a.open = liveIds.indexOf(a.id) !== -1; });
+
+  return {
+    ok: true,
+    email: email,
+    name: String((rb && rb['Name']) || ''),
+    applications: applications,
+    resumeBook: rb ? {
+      updated: rb['Updated'] instanceof Date ? rb['Updated'].toISOString() : String(rb['Updated']),
+      year: String(rb['Class year']),
+      major: String(rb['Major']),
+      lookingFor: String(rb['Looking for']),
+      profile: String(rb['LinkedIn / portfolio'])
+    } : null,
+    // The whole job board lives in the dashboard now.
+    jobs: live.map(publicView_),
+    opportunities: opportunities_()
+  };
+}
+
+function opportunities_() {
+  return readRecords_(sheet_('Opportunities', OPPORTUNITY_COLUMNS)).rows
+    .filter(function (r) { return String(r['Title']).trim() && String(r['Status']).trim().toLowerCase() !== 'hidden'; })
+    .reverse() // newest rows first
+    .map(function (r) {
+      return {
+        title: String(r['Title']),
+        details: String(r['Details']),
+        link: /^https?:\/\//i.test(String(r['Link'])) ? String(r['Link']) : '',
+        category: String(r['Category']),
+        added: dateStr_(r['Added'])
+      };
+    });
+}
+
+function sessionSecret_() {
+  const props = PropertiesService.getScriptProperties();
+  let s = props.getProperty('SESSION_SECRET');
+  if (!s) {
+    s = Utilities.getUuid() + Utilities.getUuid();
+    props.setProperty('SESSION_SECRET', s);
+  }
+  return s;
+}
+
+function sign_(payload) {
+  return Utilities.base64EncodeWebSafe(
+    Utilities.computeHmacSha256Signature(payload, sessionSecret_())).replace(/=+$/, '');
+}
+
+function makeToken_(email) {
+  const payload = Utilities.base64EncodeWebSafe(JSON.stringify({
+    e: email, x: Date.now() + SESSION_DAYS * 864e5
+  })).replace(/=+$/, '');
+  return payload + '.' + sign_(payload);
+}
+
+// Returns the email in a valid, unexpired token, or ''.
+function readToken_(token) {
+  const parts = token.split('.');
+  if (parts.length !== 2 || sign_(parts[0]) !== parts[1]) return '';
+  try {
+    const p = JSON.parse(Utilities.newBlob(Utilities.base64DecodeWebSafe(parts[0])).getDataAsString());
+    if (!p.e || !isOlinEmail_(p.e) || !(p.x > Date.now())) return '';
+    return p.e;
+  } catch (err) {
+    return '';
+  }
+}
+
+function hash_(s) {
+  return Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, s + sessionSecret_()));
 }
 
 // ---------- sheet helpers ----------
@@ -368,9 +565,16 @@ function livePostings_() {
     .reverse(); // newest first
 }
 
+// A posting added by hand to the Postings tab, with a Job link but no Applicant sheet:
+// students apply on the company's own site instead of through Catalyst.
+function isExternal_(j) {
+  return !String(j['Applicant sheet'] || '').trim() && /^https?:\/\//i.test(String(j['Job link'] || ''));
+}
+
 // What the public pages can see. No contact details or private links.
 function publicView_(j) {
   return {
+    external: isExternal_(j),
     id: String(j['ID']),
     company: String(j['Company']),
     role: String(j['Role']),
@@ -476,5 +680,9 @@ function authorize() {
   sheet_('Postings', POSTING_COLUMNS);
   sheet_('Applications', ALL_APPLICATION_COLUMNS);
   sheet_('Resume Book', RESUME_BOOK_COLUMNS);
+  const opps = sheet_('Opportunities', OPPORTUNITY_COLUMNS);
+  if (opps.getLastRow() < 2) appendRecord_(opps, FIRST_OPPORTUNITY);
+  sessionSecret_();
+  CacheService.getScriptCache();
   MailApp.getRemainingDailyQuota();
 }

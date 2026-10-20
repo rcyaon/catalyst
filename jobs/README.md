@@ -4,8 +4,9 @@ Companies post roles for Olin students; students apply with a resume; each compa
 Google Sheet of Olin applicants.
 
 ```
-jobs/index.html          list of open roles          → /jobs/
-jobs/job.html?id=…       one role + apply form       → /jobs/job.html?id=…
+students/                student dashboard: job list, apply, resume book (sign-in required)
+jobs/index.html          forwards to the dashboard's job board
+jobs/job.html?id=…       one role, read-only, with "Sign in to apply" (the link companies get)
 jobs/post.html?invite=…  form companies use to post  → the link you send them
 jobs/jobs.js             all page logic; ENDPOINT goes at the top
 jobs/jobs.css            styles on top of ../styles.css
@@ -20,7 +21,7 @@ How it works:
    - a Drive folder `Catalyst Job Board / <Company> — <Role>` with an **Olin applicants** spreadsheet in it,
      shared with their email,
    - an email to them with the posting link and the spreadsheet link.
-3. Students apply on the posting page with an @olin.edu email and a PDF resume. The resume goes into
+3. Students sign in to the dashboard with their @olin.edu email and apply there with a PDF resume. The resume goes into
    that folder, a row goes into that company's spreadsheet, and the company gets an email.
    Every application is also copied to the **Applications** tab, so Catalyst sees everything.
 4. To take a posting down, change its **Status** cell in **Postings** to `Closed`. Postings with an
@@ -64,4 +65,32 @@ stays the same.
   the folder with them by hand.
 - A free Gmail account can send about 100 emails a day; Workspace accounts about 1,500.
 - Changing `INVITE_CODE` invalidates every posting link you've sent out.
-- "Olin only" means an @olin.edu email address. It is not a login.
+- Applying and the resume book need a dashboard sign-in, so every email on an application has been
+  confirmed with a code.
+
+## Student dashboard (`/students/`)
+
+Students enter their @olin.edu email, get a 6-digit code by email (good for 10 minutes), and
+enter it. Inside: the full job board (search, filter, apply), their applications, the resume book
+form, and club links. They
+stay signed in for 30 days on that browser.
+
+It uses the same Apps Script as the job board. After pulling these changes, paste the new
+`Code.gs` in, run `authorize` once (it asks for one new permission), then **Deploy → Manage
+deployments → Edit → New version**. Add `?preview` to the page URL to try it with made-up data, or `?preview&demo` to skip sign-in.
+
+Each sign-in code is one email, so it counts toward the daily email limit above. Deleting the
+`SESSION_SECRET` script property signs everyone out.
+
+## Posting things yourself (no code)
+
+Everything below is a row in the Catalyst Job Board Sheet. Changes show up on the dashboard the
+next time a student loads it.
+
+- **Roles that apply on the company's own site** (like Mechanize or Pinpoint): add a row to
+  **Postings** with an ID starting with `j`, Status `Live`, Company, Role, Location, Type, Job link
+  (the company's application page), and Description. Leave **Applicant sheet** empty: that's what
+  tells the dashboard to show an "Apply on their site" button instead of the Catalyst form.
+- **Opportunities tab** (grants, programs, events, lists, anything): add a row to **Opportunities**
+  with Title, Details, Link, and Category (e.g. Funding, Event, Program). Newest rows show first.
+  Set Status to `Hidden` to take one down.

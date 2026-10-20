@@ -3,110 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Job Board</title>
-  <meta name="description" content="Internships and jobs posted for Olin College students. Apply with your resume and it goes straight to the person hiring.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="../logo-mark.png">
-  <link rel="stylesheet" href="../styles.css">
-  <link rel="stylesheet" href="jobs.css">
+  <title>Job Board · Catalyst</title>
+  <meta name="description" content="Internships and jobs posted for Olin College students, inside the Catalyst student dashboard.">
+  <!-- The job board lives in the student dashboard now. -->
+  <meta http-equiv="refresh" content="0; url=../students/#jobs">
+  <link rel="canonical" href="../students/">
+  <script>location.replace('../students/' + location.search + '#jobs');</script>
 </head>
-<body data-page="list">
-  <a class="skip" href="#main">Skip to content</a>
-
-  <header class="nav scrolled">
-    <a class="brand" href="../" aria-label="Catalyst home">
-      <img class="brand-logo" src="../logo-wordmark.png" alt="Catalyst" width="931" height="331">
-    </a>
-    <nav aria-label="Primary">
-      <a href="../#elements">Elements</a>
-      <a href="../#grants">Grants</a>
-      <a href="./" aria-current="page">Job Board</a>
-    </nav>
-    <a class="btn btn-small" href="https://chat.whatsapp.com/IGC31NBMDbnJxJU4OeVjmu?mode=gi_t">Join</a>
-  </header>
-
-  <main id="main" class="jobs">
-    <p class="preview-note" id="preview-note" hidden>Preview mode: these are sample jobs. Connect the backend in jobs/jobs.js to go live.</p>
-
-
-    <section class="apply resume-book" aria-labelledby="rb-title">
-      <h2 id="rb-title">Join the Catalyst resume book</h2>
-      <p>We share it with companies looking to hire from Olin Catalyst, so they can reach out to you directly.</p>
-
-      <form class="form" id="rb-form" novalidate>
-        <div class="form-row">
-          <div class="field">
-            <label for="rb-name">Full name</label>
-            <input id="rb-name" name="name" autocomplete="name" required>
-          </div>
-          <div class="field">
-            <label for="rb-email">Olin email</label>
-            <input id="rb-email" name="email" type="email" autocomplete="email" placeholder="you@olin.edu" required>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="field">
-            <label for="rb-year">Class year</label>
-            <select id="rb-year" name="year" required>
-              <option value="">Choose…</option>
-              <option>2027</option>
-              <option>2028</option>
-              <option>2029</option>
-              <option>2030</option>
-              <option>Alum</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="rb-major">Major <span class="optional">optional</span></label>
-            <input id="rb-major" name="major" placeholder="ECE, MechE, E:C, …">
-          </div>
-        </div>
-        <div class="field">
-          <label for="rb-resume">Resume</label>
-          <input id="rb-resume" name="resume" type="file" accept="application/pdf,.pdf" required>
-          <p class="hint">PDF, up to 5 MB. Already signed up? Send a new one to replace it.</p>
-        </div>
-        <fieldset class="field checks">
-          <legend>Looking for <span class="optional">optional</span></legend>
-          <label><input type="checkbox" name="lookingFor" value="Internship"> Internship</label>
-          <label><input type="checkbox" name="lookingFor" value="Full-time"> Full-time</label>
-          <label><input type="checkbox" name="lookingFor" value="Co-op"> Co-op</label>
-          <label><input type="checkbox" name="lookingFor" value="Part-time"> Part-time</label>
-        </fieldset>
-        <div class="field">
-          <label for="rb-profile">LinkedIn or portfolio <span class="optional">optional</span></label>
-          <input id="rb-profile" name="profile" type="url" placeholder="https://">
-        </div>
-        <div class="field consent">
-          <label><input type="checkbox" name="consent" value="yes"> Catalyst can share my resume and contact info with companies hiring from Olin.</label>
-        </div>
-        <div class="hp" aria-hidden="true">
-          <label for="rb-website">Leave this empty</label>
-          <input id="rb-website" name="website" tabindex="-1" autocomplete="off">
-        </div>
-        <div class="form-actions">
-          <button class="btn" type="submit">Add me to the resume book</button>
-          <p class="form-status" id="rb-status" role="status"></p>
-        </div>
-      </form>
-
-      <div class="done" id="rb-done" tabindex="-1" hidden>
-        <h3>You're in the resume book.</h3>
-        <p>We'll share it with companies hiring from Olin. To update your resume later, just submit this form again.</p>
-      </div>
-    </section>
-
-
-  </main>
-
-  <footer class="footer">
-    <img class="footer-logo" src="../logo-mark.png" alt="" width="930" height="167">
-    <p>Catalyst · Franklin W. Olin College of Engineering · Needham, MA</p>
-    <p class="muted">Student-run. Open to everyone at Olin.</p>
-  </footer>
-
-  <script src="jobs.js"></script>
+<body>
+  <p><a href="../students/#jobs">The job board is in the student dashboard →</a></p>
 </body>
 </html>
