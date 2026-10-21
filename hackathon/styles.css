@@ -1,6 +1,6 @@
 /* Catalyst Hackathon
    Layout: a hacker-facing event page (index), the registration form, and the
-   sponsorship prospectus (sponsor). Cream pages, an orange cover-style hero
+   sponsorship prospectus (sponsor). Night Shift theme (dark, see bottom of file) over a base of cream pages, an orange cover-style hero
    with the ink "track" (the Catalyst arc, scaled up) and an ink facts band;
    mono labels, italic Poppins display, DM Sans for reading. */
 :root {
@@ -468,3 +468,98 @@ a { color: inherit; }
   .reg-aside { order: 2; }
   .badge-body { min-height: 0; }
 }
+
+/* =========================================================
+   Night Shift theme: dark, terminal-flavored, orange as the only light source.
+   Layered over the base styles above; edit the tokens here to adjust the look.
+   ========================================================= */
+:root {
+  color-scheme: dark;
+  --orange: #FF6B00;
+  --orange-deep: #FF8A3D;
+  --ink: #F3ECE6;
+  --ink-soft: #A69C94;
+  --cream: #0D0C0B;
+  --tint: #171412;
+  --line: #2A2522;
+  --line-strong: #463E38;
+  --white: #141210;
+  --error: #FF6B5E;
+  --f-display: "Space Grotesk", system-ui, sans-serif;
+  --f-body: "Inter", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, monospace;
+  --radius: 6px;
+}
+body *:not(em):not(i) { font-style: normal !important; }
+body { font-size: 16.5px; }
+::selection { background: var(--orange); color: #0D0C0B; }
+
+.eyebrow::before, .facts dt::before, .stat-label::before { content: "> "; color: var(--orange); }
+.display, .rule-head, .page-head h1 { font-weight: 700; letter-spacing: -0.035em; }
+.rule-head::before { content: "#"; font-family: var(--f-mono); font-weight: 400; color: var(--orange); }
+.rule-head::after { height: 1px; background: var(--line-strong); }
+
+.btn { font-family: var(--f-mono); font-weight: 600; font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase; }
+.btn--ink { background: var(--orange); border-color: var(--orange); color: #0D0C0B; box-shadow: 0 0 0 0 rgba(255,107,0,.5); }
+.btn--ink:hover { background: #FF8A3D; box-shadow: 0 0 28px rgba(255,107,0,.45); }
+.btn--ghost { border-color: var(--line-strong); }
+.btn--ghost:hover { background: var(--tint); color: var(--ink); border-color: var(--orange); }
+
+.topbar { background: rgba(13,12,11,.82); backdrop-filter: blur(10px); border-top: 0; border-bottom-color: var(--line); }
+
+.hero {
+  background:
+    radial-gradient(60% 70% at 85% 110%, rgba(255,107,0,.38), transparent 70%),
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 44px 44px,
+    linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 44px 44px,
+    var(--cream);
+}
+.hero-title img { filter: invert(1) brightness(1.05); }
+.hero-tag { color: var(--orange); font-family: var(--f-mono); font-weight: 500; letter-spacing: -0.01em; }
+.hero-tag::after { content: "_"; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.hero-track { fill: var(--orange); filter: drop-shadow(0 0 24px rgba(255,107,0,.35)); }
+.cd-unit { background: var(--tint); color: var(--ink); border: 1px solid var(--line-strong); }
+.cd-unit b { font-family: var(--f-mono); }
+
+.facts { background: var(--tint); color: var(--ink); border-block: 1px solid var(--line); }
+.facts dt::before { content: ""; }
+.facts dd { font-family: var(--f-mono); font-weight: 500; font-size: clamp(15px, 1.5vw, 17px); }
+
+.stats li { border-top: 1px solid var(--line-strong); }
+.stat-num { font-family: var(--f-mono); font-weight: 700; color: var(--orange); }
+
+.crit { background: var(--tint); color: var(--ink); border: 1px solid var(--line-strong); border-radius: var(--radius); }
+.crit-title { color: var(--orange); font-family: var(--f-mono); font-weight: 700; font-size: clamp(26px, 2.8vw, 34px); }
+.crit-box { border: 1.5px solid var(--line-strong); border-radius: 4px; }
+.crit[aria-pressed="true"] { background: var(--orange); color: #0D0C0B; }
+.crit[aria-pressed="true"] .crit-title { color: #0D0C0B; }
+.crit[aria-pressed="true"] .crit-box { border-color: #0D0C0B; }
+.crit[aria-pressed="true"] .crit-box svg { stroke: #0D0C0B; }
+
+.faq summary { font-family: var(--f-body); font-weight: 500; }
+.sponsors { background: var(--tint); }
+.sponsor-slot { background: var(--cream); border-color: var(--line-strong); border-radius: var(--radius); }
+.sponsor-slot--filled { background: #EFE8E1; border-color: #EFE8E1; }
+.sponsor-slot:hover { box-shadow: 0 0 0 1px var(--orange), 0 0 30px rgba(255,107,0,.25); transform: none; }
+
+.footer { background: #080707; border-top: 1px solid var(--line); }
+
+/* sponsor + register pages */
+.page-head { background: radial-gradient(60% 90% at 90% 120%, rgba(255,107,0,.35), transparent 70%), var(--cream); border-bottom: 1px solid var(--line); }
+.tier { background: var(--tint); border: 1px solid var(--line-strong); border-radius: var(--radius); }
+.tier[aria-selected="true"] { background: var(--orange); color: #0D0C0B; border-color: var(--orange); }
+.tier[aria-selected="true"] .t-note { color: #0D0C0B; }
+.tier-arc .bg { fill: #3A322C; }
+.tier[aria-selected="true"] .tier-arc .fg { fill: #0D0C0B; }
+.tier-panel, .compare-wrap { background: var(--tint); border: 1px solid var(--line-strong); border-radius: var(--radius); }
+.perk-cols h4 { border-bottom-color: var(--line-strong); }
+.perk.no, .perk.no small, .perk.no .ic { color: #5C534D; }
+.badge { background: var(--tint); border-color: var(--line-strong); box-shadow: 0 0 40px rgba(255,107,0,.18); }
+.badge-top svg { fill: #0D0C0B; }
+.badge-tags span { background: var(--orange); color: #0D0C0B; }
+.badge-stamp { background: rgba(13,12,11,.85); }
+.done { background: var(--tint); border-color: var(--line-strong); }
+.error-summary { background: #2A1412; }
+.form select { background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%); }
+.footer { color: var(--ink); }
