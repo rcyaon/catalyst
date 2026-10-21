@@ -4,8 +4,10 @@
   var form = document.getElementById('reg-form');
   if (!form) return;
   var PREVIEW = document.documentElement.getAttribute('data-preview') === 'true';
-  // The form is served from the Catalyst site (GitHub Pages); the backend runs on Vercel.
-  var ENDPOINT = 'https://catalyst-hack-five.vercel.app/api/register';
+  // Registrations go straight to the Google Apps Script web app (apps-script/Code.gs), which
+  // checks them and adds a row to the Sheet. Paste its URL (ends in /exec) between the quotes.
+  // While this is empty, the form says registration isn't open yet.
+  var ENDPOINT = '';
 
   var $ = function (id) { return document.getElementById(id); };
   var statusEl = $('form-status');
@@ -425,23 +427,24 @@
     submitBtn.disabled = true;
     setStatus('Sending your registration…');
 
-    fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    }).then(function (res) {
-      return res.json().catch(function () { return {}; }).then(function (body) { return { status: res.status, body: body }; });
-    }).then(function (r) {
-      if (r.status === 200 && r.body && r.body.ok) { showDone(data); return; }
-      if (r.status === 409) { setStatus('That email is already registered. If you need to change something, email lcondearaujo@olin.edu.', true); return; }
-      if (r.status === 400 && r.body && Array.isArray(r.body.fields) && r.body.fields.length) {
-        var fe = r.body.fields.map(function (f) { return [f.field, f.message]; });
+    // Apps Script always answers 200, so the outcome is read from the JSON body.
+    // text/plain keeps this a "simple" request, which Apps Script accepts from other sites.
+    var request = ENDPOINT
+      ? fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) })
+          .then(function (res) { return res.json(); })
+      : Promise.resolve({ ok: false, error: 'not_configured' });
+    request.then(function (body) {
+      body = body || {};
+      if (body.ok) { showDone(data); return; }
+      if (body.error === 'duplicate') { setStatus('That email is already registered. If you need to change something, email lcondearaujo@olin.edu.', true); return; }
+      if (body.error === 'invalid' && Array.isArray(body.fields) && body.fields.length) {
+        var fe = body.fields.map(function (f) { return [f.field, f.message]; });
         var st = STEP_OF[fe[0][0]] || current;
         if (st !== current) goTo(st, { keepErrors: true, scroll: false });
         showErrors(fe.filter(function (e) { return (STEP_OF[e[0]] || st) === st; }));
         return;
       }
-      if (r.status === 503) { setStatus("Registration isn't open yet. Check back soon, or email lcondearaujo@olin.edu.", true); return; }
+      if (body.error === 'not_configured') { setStatus("Registration isn't open yet. Check back soon, or email lcondearaujo@olin.edu.", true); return; }
       setStatus("Your registration didn't go through. Try again in a minute, or email lcondearaujo@olin.edu.", true);
     }).catch(function () {
       setStatus("Your registration didn't go through. Check your connection and try again.", true);
