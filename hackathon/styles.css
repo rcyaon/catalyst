@@ -563,3 +563,22 @@ body { font-size: 16.5px; }
 .error-summary { background: #2A1412; }
 .form select { background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%); }
 .footer { color: var(--ink); }
+
+/* ---------- Holo Lanyard badge (register page) ---------- */
+.badge { transform: none; border-radius: 18px; background: linear-gradient(165deg, #201B18, #0F0D0C 70%); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 28px 60px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.07); transition: transform .4s ease; }
+.badge:hover { transform: perspective(900px) rotateY(-7deg) rotateX(4deg); }
+.badge::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.16) 44%, rgba(255,190,240,.10) 50%, rgba(150,220,255,.08) 55%, transparent 68%) 0 0 / 260% 100%; animation: sheen 6s ease-in-out infinite; }
+@keyframes sheen { 0%, 100% { background-position: 100% 0; } 50% { background-position: 0 0; } }
+.badge-top { flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 14px; min-height: 150px; padding: 40px 18px 16px; background: radial-gradient(120% 100% at 100% 0%, #FFB27A 0%, #FF6B00 45%, #C24A00 100%); }
+.badge-top::before { top: 14px; width: 46px; height: 10px; margin-left: -23px; border-radius: 10px; background: #0D0C0B; box-shadow: none; }
+.badge-top svg { width: 190px; fill: #0D0C0B; }
+.badge-top span { color: #0D0C0B; font-weight: 600; }
+.badge-body { padding: 18px 18px 14px; }
+.badge-role { display: inline-block; padding: 3px 9px; border-radius: 999px; background: rgba(255,107,0,.16); color: var(--orange); }
+.badge-name { margin-top: 10px; font-family: var(--f-display); font-weight: 700; font-size: 30px; letter-spacing: -0.035em; }
+.badge-school { color: var(--ink-soft); }
+.badge-tags span { border-radius: 999px; padding: 4px 9px; background: rgba(255,255,255,.06); color: var(--ink); border: 1px solid rgba(255,255,255,.12); }
+.badge .placeholder { color: #5C534D; }
+.badge-foot { border-top: 1px solid rgba(255,255,255,.08); color: var(--ink-soft); padding: 12px 18px; }
+.badge-foot::after { content: "Olin College"; }
+.badge-stamp { border-radius: 8px; border-color: var(--orange); color: var(--orange); background: rgba(13,12,11,.85); }

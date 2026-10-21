@@ -238,16 +238,20 @@
     done.scrollIntoView({ block: 'start', behavior: 'smooth' });
   }
 
-  // ---------- badge download (drawn on a canvas to match the live badge) ----------
-  var C = { orange: '#FF6B00', deep: '#A94100', ink: '#1A1512', soft: '#645A54', cream: '#FFFAF6', line: '#BFB1A6' };
+  // ---------- badge download (drawn on a canvas to match the live Holo Lanyard badge) ----------
+  var C = { orange: '#FF6B00', ink: '#F3ECE6', soft: '#A69C94', dark: '#0D0C0B' };
   var F = {
-    mono: '500 11px "DM Mono", ui-monospace, Menlo, monospace',
-    tag: '400 10.5px "DM Mono", ui-monospace, Menlo, monospace',
-    name: 'italic 800 28px "Poppins", "Avenir Next", system-ui, sans-serif',
-    school: '500 14px "DM Sans", "Helvetica Neue", Arial, sans-serif',
-    stamp: 'italic 800 20px "Poppins", "Avenir Next", system-ui, sans-serif'
+    mono: '500 11px "JetBrains Mono", ui-monospace, Menlo, monospace',
+    tag: '500 10.5px "JetBrains Mono", ui-monospace, Menlo, monospace',
+    name: '700 30px "Space Grotesk", system-ui, sans-serif',
+    school: '500 14px "Inter", system-ui, sans-serif',
+    stamp: '700 20px "Space Grotesk", system-ui, sans-serif'
   };
   function setFont(ctx, font, spacing) { ctx.font = font; if ('letterSpacing' in ctx) ctx.letterSpacing = spacing || '0px'; }
+  function rr(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h);
+  }
   function wrap(ctx, text, max) {
     var lines = [], line = '';
     text.split(/\s+/).forEach(function (word) {
@@ -265,7 +269,7 @@
     return lines;
   }
   function drawBadge() {
-    var W = 320, PAD = 16, TOP = 56, FOOT = 36, SHADOW = 6, SCALE = 3;
+    var W = 320, PAD = 18, TOP = 150, FOOT = 40, R = 18, M = 24, SCALE = 3;
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
     var inner = W - PAD * 2;
@@ -273,87 +277,110 @@
     var skills = multi('skills').map(function (t) { return t.toUpperCase(); });
 
     // measure first, so the badge grows with long names and schools
-    setFont(ctx, F.name, '-0.56px');
+    setFont(ctx, F.name, '-1.05px');
     var nameLines = wrap(ctx, name, inner);
     setFont(ctx, F.school);
     var schoolLines = wrap(ctx, val('school'), inner);
     setFont(ctx, F.tag, '0.63px');
     var tags = [], tx = 0, ty = 0;
     skills.forEach(function (t) {
-      var w = ctx.measureText(t).width + 12;
-      if (tx && tx + w > inner) { tx = 0; ty += 25; }
+      var w = ctx.measureText(t).width + 20;
+      if (tx && tx + w > inner) { tx = 0; ty += 30; }
       tags.push({ t: t, x: tx, y: ty, w: w });
-      tx += w + 5;
+      tx += w + 6;
     });
-    var bodyH = 16 + 15 + 4 + nameLines.length * 29.4 + 6 + schoolLines.length * 18.9 + (tags.length ? 10 + ty + 20 : 0) + 14;
-    bodyH = Math.max(168, bodyH);
+    var bodyH = 18 + 22 + 10 + nameLines.length * 33 + 4 + schoolLines.length * 20 + (tags.length ? 12 + ty + 26 : 0) + 16;
+    bodyH = Math.max(150, bodyH);
     var H = TOP + bodyH + FOOT;
 
-    canvas.width = (W + SHADOW) * SCALE;
-    canvas.height = (H + SHADOW) * SCALE;
+    // margin around the card leaves room for its shadow
+    canvas.width = (W + M * 2) * SCALE;
+    canvas.height = (H + M * 2) * SCALE;
     ctx.scale(SCALE, SCALE);
+    ctx.translate(M, M);
     ctx.textBaseline = 'middle';
 
-    ctx.fillStyle = C.ink; ctx.fillRect(SHADOW, SHADOW, W, H);
-    ctx.fillStyle = C.cream; ctx.fillRect(0, 0, W, H);
+    // card
+    ctx.save();
+    ctx.shadowColor = 'rgba(0, 0, 0, .45)'; ctx.shadowBlur = 20; ctx.shadowOffsetY = 8;
+    var bg = ctx.createLinearGradient(0, 0, W * .5, H);
+    bg.addColorStop(0, '#201B18'); bg.addColorStop(.7, '#0F0D0C');
+    ctx.fillStyle = bg; rr(ctx, 0, 0, W, H, R); ctx.fill();
+    ctx.restore();
+    ctx.save();
+    rr(ctx, 0, 0, W, H, R); ctx.clip();
 
-    // header band: lanyard slot, arc mark, event name
-    ctx.fillStyle = C.orange; ctx.fillRect(0, 0, W, TOP);
-    ctx.fillStyle = C.cream; ctx.strokeStyle = C.ink; ctx.lineWidth = 2;
-    ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(W / 2 - 18, 10, 36, 6, 3); else ctx.rect(W / 2 - 18, 10, 36, 6);
-    ctx.fill(); ctx.stroke();
+    // orange panel
+    var glow = ctx.createRadialGradient(W, 0, 0, W, 0, W * 1.25);
+    glow.addColorStop(0, '#FFB27A'); glow.addColorStop(.45, '#FF6B00'); glow.addColorStop(1, '#C24A00');
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, W, TOP);
+    ctx.fillStyle = C.dark; rr(ctx, W / 2 - 23, 14, 46, 10, 5); ctx.fill();
     var arc = document.querySelector('#arc path');
+    var arcW = 190, arcH = arcW * 272 / 1799;
     if (arc && window.Path2D) {
       ctx.save();
-      ctx.translate(PAD, 30);
-      ctx.scale(64 / 1799, 64 / 1799);
-      ctx.fillStyle = C.cream;
+      ctx.translate(PAD, TOP - 16 - 14 - 14 - arcH);
+      ctx.scale(arcW / 1799, arcW / 1799);
+      ctx.fillStyle = C.dark;
       ctx.fill(new Path2D(arc.getAttribute('d')), 'evenodd');
       ctx.restore();
     }
-    ctx.fillStyle = C.ink; ctx.textAlign = 'right';
+    ctx.fillStyle = C.dark; ctx.textAlign = 'left';
     setFont(ctx, F.mono, '1.32px');
-    ctx.fillText('CATALYST HACKATHON', W - PAD, 35);
+    ctx.fillText('CATALYST HACKATHON', PAD, TOP - 16 - 7);
 
     // body
-    ctx.textAlign = 'left';
-    var y = TOP + 16;
-    ctx.fillStyle = C.deep; setFont(ctx, F.mono, '1.98px');
-    ctx.fillText('BUILDER', PAD, y + 7.5); y += 15 + 4;
-    ctx.fillStyle = C.ink; setFont(ctx, F.name, '-0.56px');
-    nameLines.forEach(function (l) { ctx.fillText(l, PAD, y + 15); y += 29.4; });
-    y += 6;
-    setFont(ctx, F.school);
-    schoolLines.forEach(function (l) { ctx.fillText(l, PAD, y + 9.5); y += 18.9; });
-    y += 10;
+    var y = TOP + 18;
+    setFont(ctx, F.mono, '1.98px');
+    var pillW = ctx.measureText('BUILDER').width + 18;
+    ctx.fillStyle = 'rgba(255, 107, 0, .16)'; rr(ctx, PAD, y, pillW, 22, 11); ctx.fill();
+    ctx.fillStyle = C.orange; ctx.fillText('BUILDER', PAD + 9, y + 11.5);
+    y += 22 + 10;
+    ctx.fillStyle = C.ink; setFont(ctx, F.name, '-1.05px');
+    nameLines.forEach(function (l) { ctx.fillText(l, PAD, y + 16); y += 33; });
+    y += 4;
+    ctx.fillStyle = C.soft; setFont(ctx, F.school);
+    schoolLines.forEach(function (l) { ctx.fillText(l, PAD, y + 10); y += 20; });
+    y += 12;
     setFont(ctx, F.tag, '0.63px');
     tags.forEach(function (g) {
-      ctx.fillStyle = C.ink; ctx.fillRect(PAD + g.x, y + g.y, g.w, 20);
-      ctx.fillStyle = C.cream; ctx.fillText(g.t, PAD + g.x + 6, y + g.y + 10.5);
+      rr(ctx, PAD + g.x, y + g.y, g.w, 24, 12);
+      ctx.fillStyle = 'rgba(255, 255, 255, .06)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, .14)'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = C.ink; ctx.fillText(g.t, PAD + g.x + 10, y + g.y + 12.5);
     });
 
-    // footer and stamp
+    // footer
     var fy = TOP + bodyH;
-    ctx.strokeStyle = C.line; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
-    ctx.beginPath(); ctx.moveTo(0, fy + 1); ctx.lineTo(W, fy + 1); ctx.stroke();
-    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(255, 255, 255, .08)'; ctx.fillRect(0, fy, W, 1);
     ctx.fillStyle = C.soft; setFont(ctx, F.mono, '1.1px');
-    ctx.fillText('FEB 6, 2027', PAD, fy + 19);
+    ctx.fillText('FEB 6, 2027', PAD, fy + FOOT / 2);
+    ctx.textAlign = 'right'; ctx.fillText('OLIN COLLEGE', W - PAD, fy + FOOT / 2);
 
+    // holographic sheen
+    var sheen = ctx.createLinearGradient(0, 0, W, H);
+    sheen.addColorStop(.30, 'rgba(255, 255, 255, 0)');
+    sheen.addColorStop(.44, 'rgba(255, 255, 255, .14)');
+    sheen.addColorStop(.50, 'rgba(255, 190, 240, .08)');
+    sheen.addColorStop(.56, 'rgba(150, 220, 255, .06)');
+    sheen.addColorStop(.68, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = sheen; ctx.fillRect(0, 0, W, H);
+
+    // stamp
     setFont(ctx, F.stamp, '0.4px');
-    var sw = ctx.measureText('REGISTERED').width + 20, sh = 36;
+    var sw = ctx.measureText('REGISTERED').width + 22, sh = 38;
     ctx.save();
-    ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip();
     ctx.translate(W - 14 - sw / 2, H - 10 - sh / 2);
     ctx.rotate(-12 * Math.PI / 180);
-    ctx.fillStyle = 'rgba(255, 250, 246, .85)'; ctx.fillRect(-sw / 2, -sh / 2, sw, sh);
-    ctx.strokeStyle = C.deep; ctx.lineWidth = 3; ctx.strokeRect(-sw / 2 + 1.5, -sh / 2 + 1.5, sw - 3, sh - 3);
-    ctx.fillStyle = C.deep; ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(13, 12, 11, .85)'; rr(ctx, -sw / 2, -sh / 2, sw, sh, 8); ctx.fill();
+    ctx.strokeStyle = C.orange; ctx.lineWidth = 3; rr(ctx, -sw / 2 + 1.5, -sh / 2 + 1.5, sw - 3, sh - 3, 7); ctx.stroke();
+    ctx.fillStyle = C.orange; ctx.textAlign = 'center';
     ctx.fillText('REGISTERED', 0, 1);
     ctx.restore();
+    ctx.restore();
 
-    ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.strokeRect(1, 1, W - 2, H - 2);
+    ctx.strokeStyle = 'rgba(255, 255, 255, .1)'; ctx.lineWidth = 1;
+    rr(ctx, .5, .5, W - 1, H - 1, R); ctx.stroke();
     return canvas;
   }
   $('badge-download').addEventListener('click', function () {
