@@ -582,3 +582,26 @@ body { font-size: 16.5px; }
 .badge-foot { border-top: 1px solid rgba(255,255,255,.08); color: var(--ink-soft); padding: 12px 18px; }
 .badge-foot::after { content: "Olin College"; }
 .badge-stamp { border-radius: 8px; border-color: var(--orange); color: var(--orange); background: rgba(13,12,11,.85); }
+
+/* ---------- register page: simple top bar + fact-card header ---------- */
+.topbar--simple .nav-toggle { display: none !important; }
+.topbar--simple .nav-links { display: flex !important; position: static; flex-direction: row; align-items: center; gap: clamp(14px, 2.4vw, 28px); padding: 0; border: 0; background: none; }
+.topbar--simple .nav .nav-links a { padding: 0; border: 0; color: var(--ink-soft); }
+.topbar--simple .nav .nav-links a:hover { color: var(--orange); }
+.bar-back { white-space: nowrap; }
+.page-head--facts { padding-block: clamp(40px, 5vw, 64px) clamp(32px, 4vw, 48px); }
+.page-head--facts h1 { font-size: clamp(38px, 5.4vw, 68px); letter-spacing: -0.04em; }
+.fact-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 760px; margin: 28px 0 0; }
+.fact-cards div { padding: 14px 16px; background: var(--tint); border: 1px solid var(--line-strong); border-radius: var(--radius); }
+.fact-cards dt { font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--orange); }
+.fact-cards dt::before { content: "> "; }
+.fact-cards dd { margin: 6px 0 0; font-family: var(--f-mono); font-weight: 500; font-size: 15px; line-height: 1.35; }
+@media (max-width: 640px) { .fact-cards { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 520px) {
+  .bar-back-long { display: none; }
+  .fact-cards { gap: 6px; margin-top: 20px; }
+  .fact-cards div { display: flex; align-items: baseline; gap: 12px; padding: 10px 14px; }
+  .fact-cards dt { flex: none; width: 64px; }
+  .fact-cards dd { margin: 0; font-size: 14px; }
+  .fact-cards dd br { display: none; }
+}
