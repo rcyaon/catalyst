@@ -7,7 +7,7 @@
   // Registrations go straight to the Google Apps Script web app (apps-script/Code.gs), which
   // checks them and adds a row to the Sheet. Paste its URL (ends in /exec) between the quotes.
   // While this is empty, the form says registration isn't open yet.
-  var ENDPOINT = '';
+  var ENDPOINT = 'https://script.google.com/macros/s/AKfycbxJXz1TYdcd02-bu8xhFYKkjmYlPS2PHSg4KKu8P6eklmB0J7eztfCP0w-SjN0w9eAkzA/exec';
 
   var $ = function (id) { return document.getElementById(id); };
   var statusEl = $('form-status');
