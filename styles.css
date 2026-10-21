@@ -198,6 +198,7 @@ em { font-style: italic; }
 .detail dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 20px 0 0; font-family: var(--mono); font-size: .78rem; }
 .detail dt { color: #a9acb5; }
 .detail dd { margin: 0; }
+.detail .text-link { color: var(--c, var(--flame)); }
 
 /* ---------- grants ---------- */
 .section-dark {
@@ -239,8 +240,8 @@ em { font-style: italic; }
 }
 @media (max-width: 720px) {
   body { font-size: 16px; }
-  .nav nav { display: none; }
-  .nav .btn { margin-left: auto; }
+  .nav nav { gap: 16px; }
+  .nav nav a[href*="#"] { display: none; } /* keep only Dashboard on small screens */
   .ptable { grid-template-columns: repeat(3, 1fr); }
   .footer .muted { margin-left: 0; }
 }
