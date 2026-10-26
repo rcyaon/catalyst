@@ -589,6 +589,7 @@ body { font-size: 16.5px; }
 /* ---------- register page: simple top bar + fact-card header ---------- */
 .topbar--simple .nav-toggle { display: none !important; }
 .topbar--simple .nav-links { display: flex !important; position: static; flex-direction: row; align-items: center; gap: clamp(14px, 2.4vw, 28px); padding: 0; border: 0; background: none; }
+.nav .nav-links a[aria-current="page"] { color: var(--orange); }
 .topbar--simple .nav .nav-links a { padding: 0; border: 0; color: var(--ink-soft); }
 .topbar--simple .nav .nav-links a:hover { color: var(--orange); }
 .bar-back { white-space: nowrap; }

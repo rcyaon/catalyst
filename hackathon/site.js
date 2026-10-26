@@ -64,18 +64,6 @@
     hero.addEventListener('pointerleave', function () { track.style.setProperty('--px', '0px'); });
   }
 
-  // ---------- judging gut-check ----------
-  var crits = document.querySelectorAll('.crit');
-  var score = $('gut-score');
-  var MSG = ['0 of 3', '1 of 3', '2 of 3', '3 of 3 · ready to pitch'];
-  crits.forEach(function (c) {
-    c.addEventListener('click', function () {
-      c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
-      var n = document.querySelectorAll('.crit[aria-pressed="true"]').length;
-      if (score) score.textContent = MSG[n];
-    });
-  });
-
   // ---------- sponsor tier explorer ----------
   var tabs = Array.prototype.slice.call(document.querySelectorAll('.tier[role="tab"]'));
   var panels = document.querySelectorAll('.tier-panel');
