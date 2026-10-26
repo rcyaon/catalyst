@@ -1,0 +1,51 @@
+# Copies hackathon/ into the rcyaon.github.io repo so the page is also served at
+# https://rcyaon.github.io/hackathon/ (olincatalyst.org/hackathon/ keeps working as before).
+#
+# Needs a repo secret named PAGES_SYNC_TOKEN: a fine-grained personal access token with
+# "Contents: Read and write" on rcyaon/rcyaon.github.io only.
+
+name: Sync hackathon to rcyaon.github.io
+
+on:
+  push:
+    branches: [main]
+    paths: ['hackathon/**', '.github/workflows/sync-hackathon.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: sync-hackathon
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: src
+
+      - uses: actions/checkout@v4
+        with:
+          repository: rcyaon/rcyaon.github.io
+          token: ${{ secrets.PAGES_SYNC_TOKEN }}
+          path: dest
+
+      - name: Copy hackathon folder
+        run: |
+          mkdir -p dest/hackathon
+          rsync -a --delete \
+            --exclude README.md --exclude .gitignore --exclude apps-script/ \
+            src/hackathon/ dest/hackathon/
+
+      - name: Commit and push if anything changed
+        working-directory: dest
+        run: |
+          git add -A hackathon
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Sync hackathon from rcyaon/catalyst@${GITHUB_SHA::7}"
+          git push

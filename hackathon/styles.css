@@ -213,6 +213,9 @@ a { color: inherit; }
 .sponsor-slot img { display: block; width: auto; height: auto; max-width: 80%; max-height: 72px; }
 .sponsor-slot--filled { border-style: solid; border-color: var(--line); }
 .sponsor-row--sm .sponsor-slot { min-height: 96px; }
+.sponsor-row--lg { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sponsor-row--lg .sponsor-slot { min-height: 200px; }
+.sponsor-row--lg .sponsor-slot img { max-width: 70%; max-height: 110px; }
 .slot-tier { font-family: var(--f-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange-deep); }
 .slot-text { font-family: var(--f-display); font-weight: 600; font-size: clamp(14px, 1.8vw, 18px); line-height: 1.25; color: var(--ink-soft); }
 .sponsor-row--sm .slot-text { font-size: clamp(13px, 1.5vw, 15px); }
