@@ -6,122 +6,104 @@
   <title>Welcome to Catalyst Track</title>
   <meta name="description" content="Catalyst Track: $1,000, a mentor, and a semester to push your project further than you could alone. Run by Olin Catalyst.">
   <meta name="robots" content="noindex">
-  <meta name="theme-color" content="#0D0C0B">
   <link rel="icon" href="../hackathon/assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Space+Grotesk:wght@600;700&display=swap">
-  <link rel="stylesheet" href="track.css">
-  <script>document.documentElement.classList.add("js")</script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap">
+  <link rel="stylesheet" href="site.css">
+  <script>
+    // dark by default; remember a switch to light
+    try { if (localStorage.getItem('ct-theme') === 'light') document.documentElement.classList.add('light'); } catch (e) {}
+    document.documentElement.classList.add('js');
+  </script>
 </head>
 <body>
+  <div class="boot" id="boot" aria-hidden="true"><pre id="boot-log"></pre><p class="boot-skip">press any key to skip</p></div>
   <div class="progress" aria-hidden="true"><i id="bar"></i></div>
-  <p class="readout" id="readout" aria-hidden="true">[ 00% ]</p>
 
-  <nav class="side-toc" id="side-toc" aria-hidden="true">
-      <a tabindex="-1" href="#what-it-is">01</a>
-      <a tabindex="-1" href="#why">02</a>
-      <a tabindex="-1" href="#cohort">03</a>
-      <a tabindex="-1" href="#feedback">04</a>
-  </nav>
+  <button class="theme" id="theme" type="button" aria-label="Toggle light mode">
+    <svg class="sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-17.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+  </button>
 
-  <main class="letter">
+  <main class="page">
 
-    <header class="opening">
+    <!-- opening -->
+    <header class="opening" id="opening">
       <p class="cmd" aria-hidden="true"><span class="prompt">~/catalyst $</span> cat welcome.md</p>
       <h1 id="title" aria-label="Welcome to Catalyst Track.">Welcome to<br>Catalyst Track.</h1>
-      <p>This is the short version of what Catalyst Track is, why we started it, and what the next semester looks like. Read it once, then go build.<span class="cursor" aria-hidden="true"></span></p>
-      <nav class="toc" aria-label="Contents">
-        <p class="cmd" aria-hidden="true"><span class="prompt">~/catalyst $</span> ls</p>
-        <ol>
-          <li><a href="#what-it-is"><span>01</span>What Catalyst Track is</a></li>
-          <li><a href="#why"><span>02</span>Why Catalyst Track</a></li>
-          <li><a href="#cohort"><span>03</span>The cohort</a></li>
-          <li><a href="#feedback"><span>04</span>Tell us what's not working</a></li>
-        </ol>
-      </nav>
     </header>
 
-    <section id="what-it-is">
-      <h2><span>01</span>What Catalyst Track is</h2>
-      <p class="big">$1,000, a mentor, and a semester to push your project further than you could alone.</p>
-      <p>It's run by Olin Catalyst, Olin's student entrepreneurship hub, for Olin students building something real.</p>
+    <!-- 01 -->
+    <section class="row" id="what">
+      <div class="label"><h2><span>01</span>What it is</h2></div>
+      <div class="body">
+        <p class="big">$1,000, a mentor, and a semester to push your project further than you could alone.</p>
+        <p>It's run by Olin Catalyst, Olin's student entrepreneurship hub, for Olin students building something real.</p>
 
-      <dl class="parts">
-        <dt>The grant.</dt>
-        <dd>$1,000, non-dilutive, no strings. It's for parts, materials, PCB runs, cloud credits, user incentives, whatever gets the next version into the world. We don't take equity and we don't own anything you make.</dd>
-        <dt>The mentor.</dt>
-        <dd>Someone who's done something close to what you're trying to do: shipped hardware, sold to a first customer, raised money, spun a project out of a lab. You'll meet them biweekly for the semester. They're there for the specific question you're stuck on, not for a lecture.</dd>
-        <dt>The cohort.</dt>
-        <dd>The other grantees this semester. More on them below.</dd>
-      </dl>
+        <p><b>The grant</b> — $1,000, non-dilutive, no strings. It's for parts, materials, PCB runs, cloud credits, user incentives, whatever gets the next version into the world. We don't take equity and we don't own anything you make.</p>
+        <p><b>The mentor</b> — someone who's done something close to what you're trying to do: shipped hardware, sold to a first customer, raised money, spun a project out of a lab. You'll meet them biweekly for the semester. They're there for the specific question you're stuck on, not for a lecture.</p>
+        <p><b>The cohort</b> — the other grantees this semester. More on them below.</p>
 
-      <p>It doesn't have to be a startup. A side project, a research spinout, a tool you built for your team, a thing you can't stop thinking about: all of those count. <strong>What we care about is that you're actually building it.</strong></p>
+        <p>It doesn't have to be a startup. A side project, a research spinout, a tool you built for your team, a thing you can't stop thinking about: all of those count. <b>What we care about is that you're actually building it.</b></p>
+      </div>
     </section>
 
-    <section id="why">
-      <h2><span>02</span>Why Catalyst Track</h2>
-      <p>Olin is full of people building things. Most of those projects stall for reasons that have nothing to do with the idea: a $300 parts order nobody wants to put on a personal card, a question no one on campus can answer, a semester that got busy and a project that quietly went to the back burner.</p>
-      <p class="big">The gap isn't ambition. It's the small amount of money and the one right conversation that would have kept the thing moving.</p>
-      <p>Catalyst Track exists to close that gap at the moment it matters, which is early, before there's anything polished to show.</p>
+    <!-- 02 -->
+    <section class="row" id="why">
+      <div class="label"><h2><span>02</span>Why</h2></div>
+      <div class="body">
+        <p>Olin is full of people building things. Most of those projects stall for reasons that have nothing to do with the idea: a $300 parts order nobody wants to put on a personal card, a question no one on campus can answer, a semester that got busy and a project that quietly went to the back burner.</p>
+        <p class="big">The gap isn't ambition. It's the small amount of money and the one right conversation that would have kept the thing moving.</p>
+        <p>Catalyst Track exists to close that gap at the moment it matters, which is early, before there's anything polished to show.</p>
 
-      <p class="kicker">A few things we believe:</p>
-      <ol class="beliefs">
-        <li><h3>Early money should be easy.</h3><p>$1,000 won't fund a company. It will fund the prototype that tells you whether there's a company, or a better project, in there. That's the most valuable $1,000 a project ever gets, and it's usually the hardest to find.</p></li>
-        <li><h3>The right mentor beats a curriculum.</h3><p>You don't need ten weeks of lectures on customer discovery. You need twenty minutes with someone who's done the thing you're about to attempt, at the moment you're about to attempt it.</p></li>
-        <li><h3>Scrappy is a feature.</h3><p>We'd rather fund a working prototype held together with hot glue than a deck about one. The polish comes later, if it needs to.</p></li>
-        <li><h3>Projects that aren't startups still matter.</h3><p>Some of the best things built at Olin were never meant to be companies. Some became companies anyway. We fund the building, not the pitch.</p></li>
-      </ol>
+        <p class="kicker">A few things we believe</p>
+          <p><b>Early money should be easy</b> — $1,000 won't fund a company. It will fund the prototype that tells you whether there's a company, or a better project, in there. That's the most valuable $1,000 a project ever gets, and it's usually the hardest to find.</p>
+          <p><b>The right mentor beats a curriculum</b> — you don't need ten weeks of lectures on customer discovery. You need twenty minutes with someone who's done the thing you're about to attempt, at the moment you're about to attempt it.</p>
+          <p><b>Scrappy is a feature</b> — we'd rather fund a working prototype held together with hot glue than a deck about one. The polish comes later, if it needs to.</p>
+          <p><b>Projects that aren't startups still matter</b> — some of the best things built at Olin were never meant to be companies. Some became companies anyway. We fund the building, not the pitch.</p>
+      </div>
     </section>
 
-    <section id="cohort">
-      <h2><span>03</span>The cohort</h2>
-      <p>You're not doing this alone. Every Catalyst Track grantee this semester is in one cohort, and the cohort is as much a part of the program as the money.</p>
-      <p class="big">Projects die quietly.</p>
-      <p>Nobody decides to quit; the week just gets busy and then it's been a month. A room of people who expect to see your progress is the cheapest fix we know of. It's the same reason communities like Socratica work: showing up next to other people who are building makes you build.</p>
+    <!-- 03 -->
+    <section class="row" id="cohort">
+      <div class="label"><h2><span>03</span>The cohort</h2></div>
+      <div class="body">
+        <p>You're not doing this alone. Every Catalyst Track grantee this semester is in one cohort, and the cohort is as much a part of the program as the money.</p>
+        <p class="big">Projects die quietly.</p>
+        <p>Nobody decides to quit; the week just gets busy and then it's been a month. A room of people who expect to see your progress is the cheapest fix we know of. Showing up next to other people who are building makes you build.</p>
 
-      <p class="kicker">How the semester runs:</p>
-      <dl class="parts">
-        <dt>Build sessions in the Greenhouse room.</dt>
-        <dd>Two hours, in person, everyone working on their own project in the same room. Short check-in at the start: what you did, what's blocking you, what you need. Then heads down. Bring the hardware, bring the laptop, bring the thing that's broken.</dd>
-        <dt>Mentor meetings, on your schedule.</dt>
-        <dd>You and your mentor set the cadence. Biweekly is a good default.</dd>
-        <dt>A demo at the end.</dt>
-        <dd>Not a pitch. You show the cohort what you built, what you learned, and what's next. Rough is fine. Working is better.</dd>
-      </dl>
+        <p class="kicker">How the semester runs</p>
+        <p><b>Build sessions in the Greenhouse room</b> — two hours, in person, everyone working on their own project in the same room. Short check-in at the start: what you did, what's blocking you, what you need. Then heads down. Bring the hardware, bring the laptop, bring the thing that's broken.</p>
+        <p><b>Mentor meetings, on your schedule</b> — you and your mentor set the cadence. Biweekly is a good default.</p>
+        <p><b>A demo at the end</b> — not a pitch. You show the cohort what you built, what you learned, and what's next. Rough is fine. Working is better.</p>
 
-      <p class="kicker">What we ask of you:</p>
-      <dl class="parts">
-        <dt>Show up to build sessions.</dt>
-        <dd>If you can't make one, tell the group ahead of time.</dd>
-        <dt>Ask for help early.</dt>
-        <dd>The cohort is full of people who've debugged the thing you're stuck on.</dd>
-        <dt>Help when you can.</dt>
-        <dd>Someone's going to need a second pair of eyes on their layout, their user interviews, or their budget. That's you sometimes.</dd>
-        <dt>Spend the money.</dt>
-        <dd>It's there to be used. A grant that sits in an account for a semester didn't do its job.</dd>
-      </dl>
-
-      <p class="big">That's it.</p>
-      <p>No reports, no weekly forms, no slide deck at the end.</p>
+        <p class="kicker">What we ask of you</p>
+        <p><b>Show up to build sessions</b> — if you can't make one, tell the group ahead of time.</p>
+        <p><b>Ask for help early</b> — the cohort is full of people who've debugged the thing you're stuck on.</p>
+        <p><b>Help when you can</b> — someone's going to need a second pair of eyes on their layout, their user interviews, or their budget. That's you sometimes.</p>
+        <p><b>Spend the money</b> — it's there to be used. A grant that sits in an account for a semester didn't do its job.</p>
+      </div>
     </section>
 
-    <section id="feedback">
-      <h2><span>04</span>Tell us what's not working</h2>
-      <p>This is the first Catalyst Track cohort, which means you're building your project and we're building the program at the same time. Some of it will be wrong. The build session cadence might be off, a mentor match might not click, the demo format might not fit what you made.</p>
-      <p class="big">When that happens, say so.</p>
-      <!-- TODO: replace href with the anonymous feedback form URL -->
-      <p>Message the Catalyst team directly, bring it up at a build session, or tell us anonymously at the <a href="#">feedback form</a>. We'd rather hear it in week three than in a survey after the semester ends. Everything about this program is adjustable, and most of what the next cohort gets will come from what you tell us.</p>
+    <!-- 04 -->
+    <section class="row" id="feedback">
+      <div class="label"><h2><span>04</span>Tell us</h2></div>
+      <div class="body">
+        <p>This is the first Catalyst Track cohort, which means you're building your project and we're building the program at the same time. Some of it will be wrong. The build session cadence might be off, a mentor match might not click, the demo format might not fit what you made.</p>
+        <!-- TODO: replace href with the anonymous feedback form URL -->
+        <p><b>When that happens, say so.</b> Message the Catalyst team directly, bring it up at a build session, or tell us anonymously at the <a href="#">feedback form</a>. We'd rather hear it in week three than in a survey after the semester ends. Everything about this program is adjustable, and most of what the next cohort gets will come from what you tell us.</p>
+      </div>
     </section>
 
+    <!-- closing -->
     <footer class="closing">
       <p class="huge">We're growing this together.</p>
-      <p>Thanks for being our first cohort.</p>
-      <p class="sig">The Catalyst team</p>
-      <p class="cmd cmd-end" aria-hidden="true"><span class="prompt">~/catalyst $</span> go build<span class="cursor"></span></p>
+      <p class="muted">Thanks for being our first cohort. — The Catalyst team</p>
+      <p class="cmd end" aria-hidden="true"><span class="prompt">~/catalyst $</span> go build<span class="cursor"></span></p>
     </footer>
 
   </main>
-  <script src="track.js"></script>
+  <script src="site.js"></script>
 </body>
 </html>

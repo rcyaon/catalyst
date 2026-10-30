@@ -97,13 +97,31 @@ h2 span { color: var(--orange); }
 section > .big:first-of-type:first-child,
 h2 + .big { margin-top: 0 !important; }
 
-.kicker { margin-top: 2.4em !important; color: var(--ink); font-weight: 600; }
+/* small mono label above a list, like the section headers */
+.kicker {
+  margin-top: 3.2em !important;
+  font: 500 13px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink);
+}
 
-/* definition-style lists: the bold lead-in carries the line */
-.parts { margin: 1.4em 0 1.6em; }
-.parts dt { color: var(--ink); font-weight: 600; }
-.parts dd { margin-bottom: 1.2em; }
-.parts dd:last-child { margin-bottom: 0; }
+/* definition-style lists: numbered rows, big lead-in, softer detail underneath */
+.parts { counter-reset: part; margin: 1.2em 0 1.6em; }
+.parts dt {
+  counter-increment: part;
+  position: relative;
+  padding: 22px 0 0 56px;
+  border-top: 1px solid var(--line);
+  font: 600 clamp(19px, 2.4vw, 22px)/1.3 var(--display);
+  letter-spacing: -.01em; color: var(--ink);
+}
+.parts dt:first-child { border-top: 0; padding-top: 6px; }
+.parts dt::before {
+  content: counter(part, decimal-leading-zero);
+  position: absolute; left: 0; top: 30px;
+  font: 500 13px/1 var(--mono); letter-spacing: .08em; color: var(--orange);
+}
+.parts dt:first-child::before { top: 14px; }
+.parts dd { margin: 6px 0 0; padding: 0 0 22px 56px; }
+.parts dd:last-child { padding-bottom: 0; }
 
 .beliefs { list-style: none; margin-top: 1.4em; }
 .beliefs li { position: relative; padding-left: 48px; }
@@ -156,6 +174,7 @@ h2 + .big { margin-top: 0 !important; }
 
 @media (max-width: 520px) {
   body { font-size: 17px; }
+  .parts dt, .parts dd { padding-left: 40px; }
   .beliefs li { padding-left: 34px; }
   .beliefs li::before { left: 0; }
 }

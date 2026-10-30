@@ -11,14 +11,16 @@
     var full = lines.join('\n'), i = 0;
     title.textContent = '';
     var caret = document.createElement('span'); caret.className = 'caret';
-    (function type() {
+    // v2 can hold the typing until its boot screen finishes (window.bootDone is a Promise)
+    (window.bootDone || Promise.resolve()).then(function () { type(); });
+    function type() {
       var shown = full.slice(0, i).split('\n');
       title.innerHTML = '';
       shown.forEach(function (t, k) { if (k) title.appendChild(document.createElement('br')); title.appendChild(document.createTextNode(t)); });
       title.appendChild(caret);
       if (i++ < full.length) setTimeout(type, full[i - 2] === '\n' ? 220 : 55 + Math.random() * 45);
       else setTimeout(function () { caret.remove(); opening.classList.add('typed'); }, 500);
-    })();
+    }
   }
 
   // 2. side index: show after the opening, mark the section in view
@@ -36,7 +38,7 @@
   }
 
   // 3. scramble-decode section labels
-  if (reduce || !('IntersectionObserver' in window)) return;
+  if (reduce || window.noHeadingScramble || !('IntersectionObserver' in window)) return;
   var glyphs = '!<>-_\\/[]{}=+*^?#01';
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {

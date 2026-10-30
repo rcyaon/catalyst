@@ -1,0 +1,56 @@
+/* v2: extra terminal layer on top of ../track.css */
+
+/* boot screen */
+.boot {
+  position: fixed; inset: 0; z-index: 30;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: clamp(20px, 5vw, 56px);
+  background: var(--bg); transition: opacity .5s, visibility 0s .5s;
+}
+.boot.done { opacity: 0; visibility: hidden; }
+.boot pre { margin: 0; font: 500 13px/1.7 var(--mono); color: var(--soft); white-space: pre-wrap; }
+.boot pre b { color: var(--orange); font-weight: 500; }
+.boot pre i { color: var(--ink); font-style: normal; }
+.boot-skip { margin: 18px 0 0; font: 500 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #4A423C; }
+.no-boot .boot { display: none; }
+
+/* section rule: an orange line sweeps across, then cools to grey */
+.js section h2 { position: relative; border-top-color: transparent; }
+section h2::before, section h2::after { content: ""; position: absolute; top: -1px; left: 0; height: 1px; }
+section h2::before { right: 0; background: var(--line); }
+.js section h2::after {
+  width: 100%; background: var(--orange); box-shadow: 0 0 10px rgba(255, 107, 0, .7);
+  transform: scaleX(0); transform-origin: 0 50%; opacity: 1;
+}
+.js section h2.drawn::after { animation: sweep 1.4s cubic-bezier(.6, 0, .2, 1) forwards; }
+@keyframes sweep {
+  0% { transform: scaleX(0); opacity: 1; }
+  55% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+.no-draw section h2::after { display: none; }
+
+/* lit words in the closing line glow */
+.js .huge .w.lit { text-shadow: 0 0 28px rgba(255, 107, 0, .35); }
+
+/* belief arrows slide in after their heading */
+.js .beliefs li.rv::before { opacity: 0; transform: translateX(-14px); transition: opacity .5s .25s, transform .6s cubic-bezier(.2, .8, .2, 1) .25s; }
+.js .beliefs li.rv.in::before { opacity: 1; transform: none; }
+
+/* calmer: one progress indicator, smaller belief headings */
+.readout { display: none; }
+.beliefs h3 { font-size: clamp(20px, 2.4vw, 24px); line-height: 1.2; }
+.beliefs li::before { font-size: clamp(20px, 2.4vw, 24px); line-height: 1.2; }
+.beliefs li + li { margin-top: 32px; }
+
+/* keyboard help */
+.help {
+  position: fixed; right: clamp(16px, 3vw, 32px); bottom: 48px; z-index: 11;
+  padding: 16px 20px; background: var(--bg); border: 1px solid var(--line);
+  font: 500 12.5px/1.9 var(--mono); color: var(--soft);
+}
+.help b { color: var(--orange); font-weight: 500; display: inline-block; min-width: 3.5em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .boot { display: none; }
+}
