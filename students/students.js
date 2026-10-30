@@ -18,6 +18,7 @@
 
   function show(id) {
     steps.forEach(function (s) { $(s).hidden = s !== id; });
+    $('join-note').hidden = id !== 'step-email' && id !== 'step-code';
     var focus = { 'step-email': 'email', 'step-code': 'code' }[id];
     if (focus) $(focus).focus();
   }
@@ -48,6 +49,7 @@
     ok: true, email: 'you@olin.edu', name: 'Sam Rivera',
     applications: [],
     resumeBook: { updated: new Date(now - 9 * day).toISOString(), year: '2028', major: 'ECE', lookingFor: 'Internship, Co-op', profile: '' },
+    groupChat: 'https://chat.whatsapp.com/',
     opportunities: [
       { title: 'Grants, houses, and labs for builders', category: 'Funding', added: '2026-10-20',
         details: 'A community-run list of grants, fellowships, hacker houses, and labs for young builders, with amounts and who each one funds. By @nosilverv and @dstrachman.',
@@ -344,6 +346,9 @@
     $('dash-email').textContent = data.email;
     document.querySelectorAll('.me-email').forEach(function (n) { n.textContent = data.email; });
     $('tab-jobs-count').textContent = data.jobs.length || '';
+    var chat = $('group-chat');
+    chat.hidden = !data.groupChat;
+    if (data.groupChat) chat.querySelector('a').href = data.groupChat;
   }
 
   function renderOverview() {

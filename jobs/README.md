@@ -79,6 +79,10 @@ It uses the same Apps Script as the job board. After pulling these changes, past
 `Code.gs` in, run `authorize` once (it asks for one new permission), then **Deploy → Manage
 deployments → Edit → New version**. Add `?preview` to the page URL to try it with made-up data, or `?preview&demo` to skip sign-in.
 
+The WhatsApp group link lives only in `Code.gs` (`GROUP_CHAT_URL`) and is sent to students after they
+sign in. Every "Join" button on the site goes to `/students/?join`, which asks them to sign in with
+their Olin email. To change the link, edit `GROUP_CHAT_URL` and deploy a new version.
+
 Each sign-in code is one email, so it counts toward the daily email limit above. Deleting the
 `SESSION_SECRET` script property signs everyone out.
 

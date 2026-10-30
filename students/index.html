@@ -26,11 +26,13 @@
       <a href="../#grants">Grants</a>
       <a href="./" aria-current="page">Dashboard</a>
     </nav>
-    <a class="btn btn-small" href="https://chat.whatsapp.com/IGC31NBMDbnJxJU4OeVjmu?mode=gi_t">Join</a>
+    <a class="btn btn-small" href="./?join">Join</a>
   </header>
 
   <main id="main" class="sd">
     <p class="preview-note" id="preview-note" hidden>Preview mode: any code works and the data is made up. Connect the backend in students/students.js to go live.</p>
+
+    <p class="join-note" id="join-note" hidden>To join Catalyst you must sign into the dashboard with your Olin email.</p>
 
     <!-- Step 1: email -->
     <section class="card gate" id="step-email" aria-labelledby="email-title" hidden>
@@ -89,8 +91,8 @@
           <p class="label">Around Catalyst</p>
           <ul class="links">
             <li><a href="https://luma.com/olincatalyst" target="_blank" rel="noopener"><strong>Events</strong><span>Speakers and workshops on Luma</span></a></li>
-            <li><a href="mailto:lcarlin@olin.edu,cphillips@olin.edu,lcondearaujo@olin.edu?subject=Catalyst%20grant"><strong>Ask for a grant</strong><span>Up to $1,000 for your project</span></a></li>
-            <li><a href="https://chat.whatsapp.com/IGC31NBMDbnJxJU4OeVjmu?mode=gi_t" target="_blank" rel="noopener"><strong>Group chat</strong><span>Meetings and announcements</span></a></li>
+            <li><a href="https://forms.gle/JNhCLoYzRMoExr8bA" target="_blank" rel="noopener"><strong>Ask for a grant</strong><span>Up to $1,000 for your project</span></a></li>
+            <li id="group-chat" hidden><a target="_blank" rel="noopener"><strong>Group chat</strong><span>Meetings and announcements</span></a></li>
             <li><a href="../hackathon/"><strong>Hackathon</strong><span>Dates, sign-up, and FAQ</span></a></li>
           </ul>
         </div>

@@ -4,8 +4,8 @@
 
 const LINKS = {
   join: "https://olincatalyst.notion.site/Onboarding-bdfdcc062d924b619ffc18da4ba08f7d",
-  getStarted: "https://chat.whatsapp.com/IGC31NBMDbnJxJU4OeVjmu?mode=gi_t",
-  grant: "mailto:lcarlin@olin.edu,cphillips@olin.edu,lcondearaujo@olin.edu",
+  getStarted: "students/?join",
+  grant: "https://forms.gle/JNhCLoYzRMoExr8bA",
   support: "https://www.olin.edu/give-olin-areas-support-student-crowdfunding/catalyst",
   speakers: "https://luma.com/olincatalyst",
 };
@@ -47,7 +47,7 @@ const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 document.querySelectorAll("[data-link]").forEach((a) => {
   a.href = LINKS[a.dataset.link];
-  if (a.href.startsWith("mailto:")) return;
+  if (a.href.startsWith("mailto:") || a.origin === location.origin) return;
   a.target = "_blank";
   a.rel = "noopener";
 });

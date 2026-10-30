@@ -351,6 +351,9 @@ function resumeBookFolder_() {
 // The token is "<payload>.<signature>", signed with SESSION_SECRET (made automatically the
 // first time). Changing or deleting SESSION_SECRET in Script Properties signs everyone out.
 
+// The WhatsApp group link. Only sent to signed-in students (see me_), never put on the public site.
+const GROUP_CHAT_URL = 'https://chat.whatsapp.com/IGC31NBMDbnJxJU4OeVjmu?mode=gi_t';
+
 const CODE_TTL_SECONDS = 10 * 60;
 const CODE_MAX_TRIES = 5;
 const CODES_PER_HOUR = 5;
@@ -454,7 +457,8 @@ function me_(b) {
     } : null,
     // The whole job board lives in the dashboard now.
     jobs: live.map(publicView_),
-    opportunities: opportunities_()
+    opportunities: opportunities_(),
+    groupChat: GROUP_CHAT_URL
   };
 }
 
