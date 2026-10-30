@@ -1,15 +1,16 @@
-# Copies hackathon/ into the rcyaon.github.io repo so the page is also served at
-# https://rcyaon.github.io/hackathon/ (olincatalyst.org/hackathon/ keeps working as before).
+# Copies hackathon/ and track/ into the rcyaon.github.io repo so the pages are also served at
+# https://rcyaon.github.io/hackathon/ and https://rcyaon.github.io/track/
+# (olincatalyst.org keeps working as before). Draft versions in track/v*/ are not copied.
 #
 # Needs a repo secret named PAGES_SYNC_TOKEN: a fine-grained personal access token with
 # "Contents: Read and write" on rcyaon/rcyaon.github.io only.
 
-name: Sync hackathon to rcyaon.github.io
+name: Sync hackathon + track to rcyaon.github.io
 
 on:
   push:
     branches: [main]
-    paths: ['hackathon/**', '.github/workflows/sync-hackathon.yml']
+    paths: ['hackathon/**', 'track/**', '.github/workflows/sync-hackathon.yml']
   workflow_dispatch:
 
 concurrency:
@@ -37,15 +38,20 @@ jobs:
             --exclude README.md --exclude .gitignore --exclude apps-script/ \
             src/hackathon/ dest/hackathon/
 
+      - name: Copy track folder (final page only)
+        run: |
+          mkdir -p dest/track
+          rsync -a --delete --exclude 'v*/' src/track/ dest/track/
+
       - name: Commit and push if anything changed
         working-directory: dest
         run: |
-          git add -A hackathon
+          git add -A hackathon track
           if git diff --cached --quiet; then
             echo "No changes."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Sync hackathon from rcyaon/catalyst@${GITHUB_SHA::7}"
+          git commit -m "Sync hackathon + track from rcyaon/catalyst@${GITHUB_SHA::7}"
           git push
