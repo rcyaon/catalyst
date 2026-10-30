@@ -1,0 +1,161 @@
+/* Catalyst Track: a letter to the cohort.
+   Night Shift palette and fonts from the hackathon, used sparingly:
+   one column, big type for the lines that matter, orange only for emphasis. */
+:root {
+  --orange: #FF6B00;
+  --ink: #F3ECE6;
+  --soft: #A69C94;
+  --bg: #0D0C0B;
+  --line: #2A2522;
+  --display: "Space Grotesk", system-ui, sans-serif;
+  --body: "Inter", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+html { color-scheme: dark; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--soft);
+  font: 18px/1.7 var(--body);
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--orange); color: var(--bg); }
+:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+h1, h2, h3, p, dl, dd, ol { margin: 0; padding: 0; }
+a { color: var(--ink); text-decoration-color: var(--orange); text-underline-offset: 4px; text-decoration-thickness: 2px; }
+a:hover { color: var(--orange); }
+strong { color: var(--ink); font-weight: 600; }
+
+.letter {
+  max-width: 680px; margin: 0 auto;
+  padding: clamp(40px, 8vw, 96px) clamp(20px, 5vw, 32px) clamp(80px, 12vw, 160px);
+}
+.letter p + p { margin-top: 1.1em; }
+
+/* opening */
+.opening { min-height: 82svh; display: flex; flex-direction: column; justify-content: center; }
+/* terminal bits */
+.cmd { margin-bottom: 28px; font: 500 14px/1.5 var(--mono); color: var(--ink); }
+.prompt { color: var(--orange); margin-right: .5em; }
+.cursor {
+  display: inline-block; width: .55em; height: 1.05em; margin-left: .2em;
+  vertical-align: -.15em; background: var(--orange);
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+.cmd-end { margin: 64px 0 0; }
+.opening h1 .caret { display: inline-block; width: .08em; height: .85em; margin-left: .04em; vertical-align: -.05em; background: var(--orange); }
+.js .opening > :not(h1):not(.cmd:first-child) { opacity: 0; transition: opacity .6s; }
+.js .opening.typed > * { opacity: 1; }
+.opening h1 {
+  margin-bottom: 32px;
+  font: 700 clamp(48px, 9vw, 96px)/.95 var(--display);
+  letter-spacing: -.045em; color: var(--ink);
+}
+.opening > p:not(.cmd) { max-width: 30em; font-size: clamp(18px, 2vw, 21px); }
+section { scroll-margin-top: 32px; }
+html { scroll-behavior: smooth; }
+
+/* table of contents: an `ls` of the letter */
+.toc { margin-top: 56px; }
+.toc .cmd { margin-bottom: 14px; }
+.toc ol { list-style: none; font: 500 15px/1.5 var(--mono); }
+.toc a { display: flex; gap: 16px; padding: 7px 0; color: var(--soft); text-decoration: none; }
+.toc a span { color: var(--orange); }
+.toc a:hover { color: var(--ink); }
+.toc a:hover::after { content: " <-"; color: var(--orange); }
+
+/* side index on wide screens, shown after the opening */
+.side-toc {
+  position: fixed; left: clamp(24px, 4vw, 56px); top: 50%; transform: translateY(-50%);
+  display: none; flex-direction: column; gap: 10px;
+  font: 500 12px var(--mono); letter-spacing: .1em;
+  opacity: 0; transition: opacity .3s;
+}
+.side-toc.on { opacity: 1; }
+.side-toc a { color: var(--line); text-decoration: none; transition: color .2s; }
+.side-toc a::before { content: "  "; white-space: pre; }
+.side-toc a:hover { color: var(--soft); }
+.side-toc a.here { color: var(--orange); }
+.side-toc a.here::before { content: "> "; }
+@media (min-width: 1100px) { .side-toc { display: flex; } }
+
+/* sections */
+section { margin-top: clamp(96px, 14vw, 168px); }
+h2 {
+  display: flex; gap: 16px; align-items: baseline;
+  margin-bottom: 32px; padding-top: 16px; border-top: 1px solid var(--line);
+  font: 500 13px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--soft);
+}
+h2 span { color: var(--orange); }
+
+.big {
+  margin: 1.4em 0 !important;
+  font: 700 clamp(28px, 4.4vw, 42px)/1.12 var(--display);
+  letter-spacing: -.03em; color: var(--ink);
+}
+section > .big:first-of-type:first-child,
+h2 + .big { margin-top: 0 !important; }
+
+.kicker { margin-top: 2.4em !important; color: var(--ink); font-weight: 600; }
+
+/* definition-style lists: the bold lead-in carries the line */
+.parts { margin: 1.4em 0 1.6em; }
+.parts dt { color: var(--ink); font-weight: 600; }
+.parts dd { margin-bottom: 1.2em; }
+.parts dd:last-child { margin-bottom: 0; }
+
+.beliefs { list-style: none; margin-top: 1.4em; }
+.beliefs li { position: relative; padding-left: 48px; }
+.beliefs li + li { margin-top: 40px; }
+.beliefs li::before {
+  content: "→";
+  position: absolute; left: 0; top: 0;
+  font: 400 clamp(24px, 3.4vw, 32px)/1.15 var(--body); color: var(--orange);
+}
+.beliefs h3 {
+  margin-bottom: 8px;
+  font: 700 clamp(24px, 3.4vw, 32px)/1.15 var(--display);
+  letter-spacing: -.025em; color: var(--ink);
+}
+
+/* closing */
+.closing { margin-top: clamp(120px, 18vw, 220px); }
+.huge {
+  margin-bottom: 24px;
+  font: 700 clamp(44px, 8vw, 84px)/.98 var(--display);
+  letter-spacing: -.045em; color: var(--orange);
+}
+.sig { margin-top: 40px !important; font: 500 13px var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+.sig::before { content: "— "; }
+
+/* scroll experience */
+.progress { position: fixed; inset: 0 0 auto; height: 2px; z-index: 10; }
+.progress i { display: block; height: 100%; background: var(--orange); transform-origin: 0 50%; transform: scaleX(0); box-shadow: 0 0 12px rgba(255, 107, 0, .6); }
+.readout {
+  position: fixed; right: clamp(16px, 3vw, 32px); bottom: clamp(16px, 3vw, 28px); z-index: 10;
+  margin: 0; font: 500 12px var(--mono); letter-spacing: .12em; color: var(--soft);
+  font-variant-numeric: tabular-nums;
+}
+.js .rv { opacity: 0; transform: translateY(18px); transition: opacity .8s ease, transform .8s cubic-bezier(.2, .8, .2, 1); }
+.js .rv.in { opacity: 1; transform: none; }
+.w { transition: color .25s; }
+.js .big .w { color: #3A332E; }
+.js .huge .w { color: #3A2112; }
+.js .big .w.lit { color: var(--ink); }
+.js .huge .w.lit { color: var(--orange); }
+.opening h1 { will-change: transform, opacity; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .rv { opacity: 1; transform: none; transition: none; }
+  .js .big .w, .js .huge .w { color: inherit; }
+  html { scroll-behavior: auto; }
+  .cursor { animation: none; }
+  .js .opening > * { opacity: 1 !important; transition: none; }
+}
+
+@media (max-width: 520px) {
+  body { font-size: 17px; }
+  .beliefs li { padding-left: 34px; }
+  .beliefs li::before { left: 0; }
+}
