@@ -201,6 +201,14 @@ em { font-style: italic; }
 .detail .text-link { color: var(--c, var(--flame)); }
 
 /* ---------- grants ---------- */
+/* ---------- events (Luma embed) ---------- */
+.luma-embed {
+  border: 2px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--flame);
+  background: #fff;
+}
+.luma-embed iframe { display: block; width: 100%; height: 600px; border: 0; }
+
 .section-dark {
   max-width: none;
   background: var(--ink); color: var(--paper);
